@@ -1,13 +1,17 @@
+/* eslint-disable no-unused-vars */
 import { createContext } from 'react'
 
 interface AdminContextProps {
+  admins: IAdministrador[]
+  adminsRoles: IRolesAdmin[]
   users: IUsuario[]
-  usersFiltered: IUsuario[]
   quizzes: IExamen[]
+  usersFiltered: IUsuario[]
+  getAdmins: () => Promise<void>
+  getAdminsRoles: () => Promise<void>
   getUsers: () => Promise<void>
   getQuizzes: () => Promise<void>
   setUsersFiltered: (usersFiltered: IUsuario[]) => void
-  // addUser: (user: any) => Promise<any>
 }
 
 const AdminContext = createContext({} as AdminContextProps)

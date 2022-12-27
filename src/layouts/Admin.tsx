@@ -2,7 +2,7 @@ import React from 'react'
 import Head from 'next/head'
 import { Box, Heading, Flex, Show } from '@chakra-ui/react'
 import { LogoutMenu, PageTransition, Sidebar } from '@/components'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuth } from '@/hooks'
 
 const Header = () => {
   const { admin } = useAuth()

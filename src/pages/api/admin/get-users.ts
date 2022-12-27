@@ -28,7 +28,7 @@ async function getUsers(req: NextApiRequest, res: NextApiResponse) {
       return res.status(200).json(users)
     }
 
-    return res.status(401).json({ msg: 'No estas autorizado para acceder a este contenido' })
+    return res.status(401).json({ msg: 'No estás autorizado para acceder a este contenido' })
   } catch (error) {
     return res.status(404).json({ msg: error })
   }

@@ -8,9 +8,9 @@ import {
 } from '@chakra-ui/react'
 import { TextInput } from './TextInput'
 import { MyModal } from './MyModal'
-import { useAdmin } from '@/hooks/useAdmin'
+import { useAdmin } from '@/hooks'
 import { useForm } from 'react-hook-form'
-import { quizApi } from '@/api/quiz-api'
+import { ticApi } from '@/api/tic-api'
 
 interface AddUserModalProps {
   isOpen: boolean
@@ -39,7 +39,7 @@ export const AddUserModal: FCC<AddUserModalProps> = ({ isOpen, onClose }) => {
     setBtnLoading(true)
 
     try {
-      await quizApi.post('/admin/add-user', data)
+      await ticApi.post('/admin/add-user', data)
       getUsers()
       closeModal()
     } catch (error) {

@@ -12,10 +12,10 @@ export default function handlerEditUser(req: NextApiRequest, res: NextApiRespons
 }
 
 async function editUser(req: NextApiRequest, res: NextApiResponse) {
-  const { id, datos } = req.body
+  const { id, data } = req.body
 
   try {
-    await new Usuario().update(id, datos)
+    await new Usuario().update(id, data)
     return res.status(200).json({ msg: 'Usuario editado correctamente' })
   } catch (error) {
     return res.status(400).json(error)

@@ -8,7 +8,7 @@ import {
   OrderedList,
   ListItem
 } from '@chakra-ui/react'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuth } from '@/hooks'
 import { UserLayout } from '@/layouts'
 import { Button } from '@/components'
 

@@ -20,11 +20,6 @@ export const styles: Styles = {
       overflowX: 'hidden',
       color: 'gray.600',
       bgColor: 'bg'
-    },
-    '#__next': {
-      minH: '100vh',
-      display: 'flex',
-      flexDir: 'column'
     }
   })
 }

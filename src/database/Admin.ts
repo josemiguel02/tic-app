@@ -12,7 +12,8 @@ export class Admin extends Database<IAdministrador, IAdministrador[]> {
           'nombre',
           'apellido',
           'cedula',
-          'roles.rol'
+          'roles.rol',
+          'admin.rol_id'
         )
 
       if (!admins.length) {
@@ -27,7 +28,7 @@ export class Admin extends Database<IAdministrador, IAdministrador[]> {
 
   async findByIdentification(identification: string): Promise<IAdministrador> {
     try {
-      const [admin] = await this._adminTable
+      const admin = await this._adminTable
         .join('roles', 'admin.rol_id', 'roles.id')
         .where('admin.cedula', identification)
         .select(
@@ -36,10 +37,10 @@ export class Admin extends Database<IAdministrador, IAdministrador[]> {
           'apellido',
           'cedula',
           'roles.rol'
-        )
+        ).first()
 
       if (!admin) {
-        throw 'El administrador no está registrado'
+        throw 'El administrador no se encuentra registrado'
       }
 
       return admin
@@ -50,7 +51,7 @@ export class Admin extends Database<IAdministrador, IAdministrador[]> {
 
   async findByID(id: number): Promise<IAdministrador> {
     try {
-      const [admin] = await this._adminTable
+      const admin = await this._adminTable
         .join('roles', 'admin.rol_id', 'roles.id')
         .where('admin.id', id)
         .select(
@@ -59,10 +60,10 @@ export class Admin extends Database<IAdministrador, IAdministrador[]> {
           'apellido',
           'cedula',
           'roles.rol'
-        )
+        ).first()
 
       if (!admin) {
-        throw 'No existe un administrador registrado con dicho id'
+        throw 'El administrador no se encuentra registrado'
       }
 
       return admin
@@ -71,12 +72,20 @@ export class Admin extends Database<IAdministrador, IAdministrador[]> {
     }
   }
 
-  async create(data: AdminDTO | AdminDTO[]) {
+  async create(data: AdminDTO) {
     try {
+      const adminFound = await this._adminTable
+        .where('cedula', data.cedula)
+        .select('id')
+
+      if (adminFound.length) {
+        throw 'El administrador ya se encuentra registrado'
+      }
+
       const adminAdded = await this._adminTable.insert(data)
 
       if (!adminAdded.length) {
-        throw 'No se pudo agregar el admin en la base de datos'
+        throw 'No se pudo agregar el administrador'
       }
 
       return adminAdded
@@ -87,8 +96,7 @@ export class Admin extends Database<IAdministrador, IAdministrador[]> {
 
   async update(id: number, data: Partial<AdminDTO>) {
     try {
-      const adminUpdated = await this._adminTable.where('id', id).update(data)
-      console.log(adminUpdated)
+      await this._adminTable.where('id', id).update(data)
     } catch (error) {
       throw error
     }
@@ -96,8 +104,7 @@ export class Admin extends Database<IAdministrador, IAdministrador[]> {
 
   async delete(id: number) {
     try {
-      const adminDeleted = await this._adminTable.where('id', id).delete()
-      console.log(adminDeleted)
+      await this._adminTable.where('id', id).delete()
     } catch (error) {
       throw error
     }

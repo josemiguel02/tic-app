@@ -2,7 +2,7 @@ import React from 'react'
 import Countdown, { type CountdownRenderProps } from 'react-countdown'
 import { BoxProps, Flex, Text, Icon } from '@chakra-ui/react'
 import { FaRegClock } from 'react-icons/fa'
-import { useUI } from '@/hooks/useUI'
+import { useUI } from '@/hooks'
 
 const renderer = ({ minutes, seconds, completed }: CountdownRenderProps) => {
   if (completed) return <Text>Se ha terminado el tiempo</Text>

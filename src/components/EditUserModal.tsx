@@ -9,13 +9,13 @@ import {
 import { useForm } from 'react-hook-form'
 import { TextInput } from './TextInput'
 import { MyModal } from './MyModal'
-import { useAdmin } from '@/hooks/useAdmin'
-import { quizApi } from '@/api/quiz-api'
+import { useAdmin } from '@/hooks'
+import { ticApi } from '@/api/tic-api'
 
 interface EditUserModalProps {
-  userId: number | null
   isOpen: boolean
   onClose: () => void
+  userId: number | null
   defaultValues: Partial<UsuarioDTO>
 }
 
@@ -38,11 +38,11 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
 
   const formId = 'addUserForm'
 
-  const handleEditUser = async (datos: UsuarioDTO) => {
+  const handleEditUser = async (data: UsuarioDTO) => {
     setBtnLoading(true)
 
     try {
-      await quizApi.post('/admin/edit-user', { id: userId, datos })
+      await ticApi.post('/admin/edit-user', { id: userId, data })
       getUsers()
       closeModal()
     } catch (error) {
@@ -61,7 +61,9 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
     entries.forEach(([key, value]) => {
       setValue(key as any, value)
     })
-  }, [setValue, defaultValues])
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultValues])
 
   return (
     <MyModal

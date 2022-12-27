@@ -1,4 +1,4 @@
-export const blobToText = (blob: Blob): Promise<string | null> => {
+export const blobToStr = (blob: Blob): Promise<string | null> => {
   return new Promise((resolve, reject) => {
     if (typeof window === 'undefined') {
       reject('API válida desde el cliente')

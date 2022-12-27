@@ -1,3 +1,4 @@
+import Router from 'next/router'
 import { useState } from 'react'
 import {
   Flex,
@@ -10,14 +11,11 @@ import {
   Icon,
   useDisclosure
 } from '@chakra-ui/react'
-import { useQuiz } from '@/hooks/useQuiz'
 import { AnimatePresence, motion, Variants } from 'framer-motion'
-import { Button, Dialog, TypingInput } from '@/components'
 import { IoRadioButtonOff, IoRadioButtonOnOutline } from 'react-icons/io5'
-import { quizApi } from '@/api/quiz-api'
-import { useAuth } from '@/hooks/useAuth'
-import Router from 'next/router'
-import { useUI } from '@/hooks/useUI'
+import { useQuiz, useAuth, useUI } from '@/hooks'
+import { Button, Dialog, TypingInput } from '@/components'
+import { ticApi } from '@/api/tic-api'
 
 const variants: Variants = {
   hidden: { opacity: 0, x: 10 },
@@ -100,7 +98,7 @@ export const Questions = () => {
 
   const sendQualification = async () => {
     try {
-      await quizApi.post('/quiz/send-qualification', {
+      await ticApi.post('/quiz/send-qualification', {
         id: user?.id,
         finalScore
       })
@@ -148,7 +146,10 @@ export const Questions = () => {
 
                 {examen.tipo === 'tipeo' ? (
                   <>
-                    <TypingInput text={examen.enunciado} score={examen.puntaje} />
+                    <TypingInput
+                      text={examen.enunciado}
+                      score={examen.puntaje}
+                    />
                     <Button
                       mt={4}
                       alignSelf='flex-end'

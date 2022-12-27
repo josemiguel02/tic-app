@@ -2,7 +2,7 @@ import { useEffect, useReducer } from 'react'
 import Router from 'next/router'
 import AuthContext from './AuthContext'
 import { AuthReducer } from './AuthReducer'
-import { quizApi } from '@/api/quiz-api'
+import { ticApi } from '@/api/tic-api'
 import { getAuthCookie, setAuthCookie, removeAuthCookie } from '@/utils/cookies'
 
 export interface IAuthState {
@@ -30,7 +30,7 @@ const AuthProvider: FCC = ({ children }) => {
     const result = { isValidLoginUser: false, msg: '' }
 
     try {
-      const { data } = await quizApi.post<LoginResponse>('/auth/user/login', credentials)
+      const { data } = await ticApi.post<LoginResponse>('/auth/user/login', credentials)
       const { token, user } = data
       setAuthCookie(token)
       dispatch({ type: '[AUTH] - LOGIN', payload: user })
@@ -44,7 +44,7 @@ const AuthProvider: FCC = ({ children }) => {
 
   const logout = async () => {
     try {
-      await quizApi.post('/auth/logout')
+      await ticApi.post('/auth/logout')
       removeAuthCookie()
       Router.reload()
     } catch (e) {
@@ -58,7 +58,7 @@ const AuthProvider: FCC = ({ children }) => {
     }
 
     try {
-      const { data } = await quizApi.get<LoginResponse>('/auth/validate-token')
+      const { data } = await ticApi.get<LoginResponse>('/auth/validate-token')
       const { token, user } = data
       setAuthCookie(token)
       dispatch({ type: '[AUTH] - LOGIN', payload: user })
@@ -71,7 +71,7 @@ const AuthProvider: FCC = ({ children }) => {
     const result = { isValidLoginAdmin: false, msg: '' }
 
     try {
-      const { data } = await quizApi.post<LoginResponse>('/auth/admin/login', credentials)
+      const { data } = await ticApi.post<LoginResponse>('/auth/admin/login', credentials)
       const { token, user } = data
       setAuthCookie(token)
       dispatch({ type: '[AUTH] - LOGIN', payload: user })

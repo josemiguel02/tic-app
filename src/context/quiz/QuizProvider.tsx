@@ -1,7 +1,7 @@
 import { useReducer, useEffect } from 'react'
 import QuizContext from './QuizContext'
 import { QuizReducer } from './QuizReducer'
-import { quizApi } from '@/api/quiz-api'
+import { ticApi } from '@/api/tic-api'
 import { hasTokenAndIsUser } from '@/utils/check-user-type'
 
 export interface IQuizState {
@@ -34,7 +34,7 @@ const QuizProvider: FCC = ({ children }) => {
     }
 
     try {
-      const { data } = await quizApi.get<IPreguntas[]>('/quiz/get-questions')
+      const { data } = await ticApi.get<IPreguntas[]>('/quiz/get-questions')
 
       const shuffleArr = data.sort(() => Math.random() - 0.5)
 

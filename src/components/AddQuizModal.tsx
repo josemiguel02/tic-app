@@ -8,8 +8,6 @@ import {
   UseFormWatch,
   FormState,
   useController,
-  UseFieldArrayAppend,
-  UseFormReset,
   UseFormResetField
 } from 'react-hook-form'
 import {
@@ -21,16 +19,14 @@ import {
   Select,
   Icon,
   IconButton,
-  Box,
-  chakra,
-  useRadio
+  chakra
 } from '@chakra-ui/react'
 import { MyModal } from './MyModal'
 import { nanoid } from 'nanoid'
 import { MyInput } from './MyInput'
 import { TextInput } from './TextInput'
-import { quizApi } from '@/api/quiz-api'
-import { useAdmin } from '@/hooks/useAdmin'
+import { ticApi } from '@/api/tic-api'
+import { useAdmin } from '@/hooks'
 import { BsFillImageFill } from 'react-icons/bs'
 
 interface AddQuizModalProps {
@@ -93,18 +89,18 @@ export const AddQuizModal: FCC<AddQuizModalProps> = ({ isOpen, onClose }) => {
   }
 
   const handleAddQuiz = async (data: ExamenDTO) => {
-    console.log(data)
+    // console.log(data)
     // TODO: Arreglar el state que se queda dirty en los campos de Options.
-    // setBtnLoading(true)
-    // const datos = { ...data, preguntas: JSON.stringify(data.preguntas) }
+    setBtnLoading(true)
+    const datos = { ...data, preguntas: JSON.stringify(data.preguntas) }
 
-    // try {
-    //   await quizApi.post('/admin/add-quiz', datos)
-    //   getQuizzes()
-    //   closeModal()
-    // } catch (error) {
-    //   console.error(error)
-    // }
+    try {
+      await ticApi.post('/admin/add-quiz', datos)
+      getQuizzes()
+      closeModal()
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (
@@ -198,7 +194,6 @@ const QuestionItem: FCC<QuestionsArrayProps> = ({
   useEffect(() => {
     if (questionType === 'tipeo') {
       resetField(`preguntas.${i}.opciones`, { defaultValue: [] })
-      console.log(questionType)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questionType])

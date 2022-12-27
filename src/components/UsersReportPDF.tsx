@@ -38,25 +38,23 @@ const Flex: FCC<Partial<FlexProps>> = ({
   )
 }
 
-interface ReportFilterProps {
+interface UsersReportPDFProps {
   users: IUsuario[]
   admin?: IAdmin
   reportDetails: ReportType
 }
 
-export const ReportFilter: FCC<ReportFilterProps> = ({
+export const UsersReportPDF: FCC<UsersReportPDFProps> = ({
   users,
   admin,
   reportDetails
 }) => {
-  const date = new Date().toLocaleDateString()
   const { position, dateFrom, dateTo } = reportDetails
-  // console.log(reportDetails)
 
+  const date = new Date().toLocaleDateString()
   const dateStart = new Date(`${dateFrom}T00:00`).toLocaleDateString()
   const dateEnd = new Date(`${dateTo}T00:00`).toLocaleDateString()
 
-  // const usersQuizFinished = users.filter((user) => user.examen_terminado)
   const usersQuizPending = users.filter(user => {
     if (!Boolean(user.examen_terminado) && !user.calificacion) {
       return user
@@ -208,7 +206,7 @@ export const ReportFilter: FCC<ReportFilterProps> = ({
 
 const styles = StyleSheet.create({
   body: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#424242',
     paddingTop: 35,
     paddingBottom: 70,
@@ -225,7 +223,7 @@ const styles = StyleSheet.create({
     maxWidth: '100%'
   },
   details: {
-    fontSize: 14,
+    fontSize: 12,
     marginTop: 15,
     marginBottom: 70,
     justifyContent: 'space-between'
@@ -236,7 +234,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   table: {
-    fontSize: 11,
+    fontSize: 10,
     width: '100%',
     marginTop: 10
   },
@@ -261,7 +259,6 @@ const styles = StyleSheet.create({
   },
   usersCount: {
     marginTop: 50,
-    fontSize: 14,
     justifyContent: 'flex-end'
   },
   pageNumber: {

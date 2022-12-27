@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import useTyping, { PhaseType } from 'react-typing-game-hook'
 import { Box, Text, keyframes } from '@chakra-ui/react'
-import { useQuiz } from '@/hooks/useQuiz'
+import { useQuiz } from '@/hooks'
 
 const blink = keyframes`
   0%,

@@ -1,5 +1,5 @@
 import { Box, Container, Heading } from '@chakra-ui/react'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuth } from '@/hooks'
 import { LogoutMenu } from './LogoutMenu'
 
 export const Navbar = () => {

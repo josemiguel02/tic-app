@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react'
+import { ChangeEvent, useRef, useState } from 'react'
 import NextLink from 'next/link'
 import dynamic from 'next/dynamic'
 import {
@@ -15,38 +15,29 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
-  Button,
-  FormLabel,
-  FormControl,
-  Select
+  Button
 } from '@chakra-ui/react'
 import { AdminLayout } from '@/layouts'
-import {
-  TableUsers,
-  AddUserModal,
-  Dialog,
-  MyModal,
-  TextInput,
-  ReportFilter
-} from '@/components'
+import { TableUsers, AddUserModal, Dialog } from '@/components'
 import { IoMdAdd } from 'react-icons/io'
-import { useAdmin } from '@/hooks/useAdmin'
-import { BiSearchAlt } from 'react-icons/bi'
-import { quizApi } from '@/api/quiz-api'
-import { blobToText } from '@/utils/blob-to-text'
 import { FaFileCsv } from 'react-icons/fa'
 import { MdKeyboardArrowRight } from 'react-icons/md'
 import { AiOutlineFilePdf } from 'react-icons/ai'
-import { useForm } from 'react-hook-form'
-import { usePDF } from '@react-pdf/renderer'
+import { BiSearchAlt } from 'react-icons/bi'
+import { useAdmin, useAuth } from '@/hooks'
+import { ticApi } from '@/api/tic-api'
+import { blobToStr } from '@/utils/blob-to-str'
 
 // const ButtonPDF = dynamic(() => import('@/components/ButtonPDF'), {
 //   ssr: false
 // })
 
-const UsersReport = dynamic(() => import('@/components/UsersReport'), {
-  ssr: false
-})
+const UsersModalReport = dynamic(
+  () => import('@/components/UsersModalReport'),
+  {
+    ssr: false
+  }
+)
 
 export { getServerSideProps } from '@/utils/admin-middleware'
 
@@ -59,6 +50,7 @@ const UsuariosPage = () => {
     show: false,
     msg: ''
   })
+  const { admin } = useAuth()
   const { users, setUsersFiltered, getUsers } = useAdmin()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const debounceRef = useRef<NodeJS.Timeout>()
@@ -96,8 +88,8 @@ const UsuariosPage = () => {
       })
 
       try {
-        const csvString = await blobToText(csvFile)
-        await quizApi.post('/admin/add-users', { csvString })
+        const csvString = await blobToStr(csvFile)
+        await ticApi.post('/admin/add-users', { csvString })
         getUsers()
         closeCsvDialog()
       } catch (error) {
@@ -126,7 +118,7 @@ const UsuariosPage = () => {
   }
 
   const searchUser = (query: string) => {
-    const usuarios = users.filter((user) => {
+    const usuarios = users.filter(user => {
       if (user.nombre.toLocaleLowerCase().startsWith(query.toLowerCase())) {
         return user
       }
@@ -172,7 +164,7 @@ const UsuariosPage = () => {
               placeholder='Buscar...'
               size='sm'
               focusBorderColor='primary'
-              onChange={(e) => {
+              onChange={e => {
                 setTxt(e.target.value)
                 onQueryChanged(e.target.value)
               }}
@@ -180,22 +172,26 @@ const UsuariosPage = () => {
           </InputGroup>
 
           <Flex flexDir='column' gap={2}>
-            <Button
-              size='sm'
-              leftIcon={<Icon as={IoMdAdd} boxSize={5} />}
-              onClick={onOpen}
-            >
-              Nuevo usuario
-            </Button>
+            {admin?.role === 'ADMIN' && (
+              <>
+                <Button
+                  size='sm'
+                  leftIcon={<Icon as={IoMdAdd} boxSize={5} />}
+                  onClick={onOpen}
+                >
+                  Nuevo usuario
+                </Button>
 
-            <Button
-              size='sm'
-              variant='success'
-              leftIcon={<Icon as={FaFileCsv} boxSize={4} />}
-              onClick={() => setShowCSVDialog(true)}
-            >
-              Importar CSV
-            </Button>
+                <Button
+                  size='sm'
+                  variant='success'
+                  leftIcon={<Icon as={FaFileCsv} boxSize={4} />}
+                  onClick={() => setShowCSVDialog(true)}
+                >
+                  Importar CSV
+                </Button>
+              </>
+            )}
 
             {/* <ButtonPDF /> */}
 
@@ -276,7 +272,7 @@ const UsuariosPage = () => {
         </>
       </Dialog>
 
-      <UsersReport
+      <UsersModalReport
         isOpen={showReportDialog}
         onClose={() => setShowReportDialog(false)}
       />

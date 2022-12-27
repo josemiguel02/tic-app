@@ -50,6 +50,12 @@ declare global {
     apellido: string
     cedula: string
     rol: string
+    rol_id: number
+  }
+
+  interface IRolesAdmin {
+    id: number
+    rol: string
   }
 
   interface IUsuario {

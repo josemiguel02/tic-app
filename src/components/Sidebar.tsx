@@ -1,7 +1,7 @@
 import NextImage from 'next/image'
 import { Flex, Icon } from '@chakra-ui/react'
 import { AiOutlineHome, AiOutlineUser } from 'react-icons/ai'
-import { MdOutlineStickyNote2 } from 'react-icons/md'
+import { MdOutlineStickyNote2, MdOutlineAdminPanelSettings } from 'react-icons/md'
 import { NavLink } from './NavLink'
 
 const links = [
@@ -19,6 +19,11 @@ const links = [
     label: 'Exámenes',
     icon: MdOutlineStickyNote2,
     path: '/dashboard/examenes'
+  },
+  {
+    label: 'Administradores',
+    icon: MdOutlineAdminPanelSettings,
+    path: '/dashboard/admins'
   }
 ]
 

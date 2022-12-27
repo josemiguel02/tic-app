@@ -17,7 +17,7 @@ export class Examen extends Database<IExamen, IExamen[]> {
     }
   }
 
-  async create(data: ExamenDTO | ExamenDTO[]) {
+  async create(data: ExamenDTO) {
     try {
       const quizAdded = await this._quizTable.insert(data)
 

@@ -1,5 +1,5 @@
 import axios from 'axios'
 
-export const quizApi = axios.create({
+export const ticApi = axios.create({
   baseURL: '/api'
 })

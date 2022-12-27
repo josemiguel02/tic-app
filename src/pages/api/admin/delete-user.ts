@@ -1,5 +1,5 @@
-import { Usuario } from '@/database'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { Usuario } from '@/database'
 
 export default function handlerDeleteUser(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
@@ -16,7 +16,7 @@ async function deleteUser(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     await new Usuario().delete(id)
-    return res.status(200).json({ msg: 'Usuario eliminado correctamente', id  })
+    return res.status(200).json({ msg: 'Usuario eliminado correctamente' })
   } catch (error) {
     return res.status(400).json(error)
   }

@@ -1,4 +1,3 @@
-import { useAuth } from '@/hooks/useAuth'
 import {
   Button,
   Flex,
@@ -11,6 +10,7 @@ import {
 import { HiOutlineUserCircle } from 'react-icons/hi'
 import { IoMdLogOut } from 'react-icons/io'
 import { IoChevronDownOutline } from 'react-icons/io5'
+import { useAuth } from '@/hooks'
 
 export const LogoutMenu = () => {
   const { logout } = useAuth()

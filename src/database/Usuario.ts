@@ -13,7 +13,7 @@ export class Usuario extends Database<IUsuario, IUsuario[]> {
         )
 
       if (!user) {
-        throw 'El usuario no está registrado'
+        throw 'El usuario no se encuentra registrado'
       }
 
       if(!user.preguntas.length) {
@@ -58,7 +58,7 @@ export class Usuario extends Database<IUsuario, IUsuario[]> {
 
   async findByIdentification(identification: string): Promise<IUsuario> {
     try {
-      const [user] = await this._userTable
+      const user = await this._userTable
         .join('examen', 'usuario.examen_id', 'examen.id')
         .where('usuario.cedula', identification)
         .select(
@@ -75,10 +75,10 @@ export class Usuario extends Database<IUsuario, IUsuario[]> {
           'examen_terminado',
           'usuario.examen_id',
           'fecha_examen'
-        )
+        ).first()
 
       if (!user) {
-        throw 'El usuario no está registrado'
+        throw 'El usuario no se encuentra registrado'
       }
 
       return user
@@ -89,7 +89,7 @@ export class Usuario extends Database<IUsuario, IUsuario[]> {
 
   async findByID(id: number): Promise<IUsuario> {
     try {
-      const [user] = await this._userTable
+      const user = await this._userTable
         .join('examen', 'usuario.examen_id', 'examen.id')
         .where('usuario.id', id)
         .select(
@@ -103,11 +103,13 @@ export class Usuario extends Database<IUsuario, IUsuario[]> {
           'modelo',
           'operadora',
           'calificacion',
-          'examen_terminado'
-        )
+          'examen_terminado',
+          'usuario.examen_id',
+          'fecha_examen'
+        ).first()
 
       if (!user) {
-        throw 'El usuario no está registrado'
+        throw 'El usuario no se encuentra registrado'
       }
 
       return user
@@ -118,10 +120,27 @@ export class Usuario extends Database<IUsuario, IUsuario[]> {
 
   async create(data: UsuarioDTO | UsuarioDTO[]) {
     try {
+      // Validar para cuando se inserte varios usuarios
+      if (Array.isArray(data)) {
+        // const usersFound = await this._userTable
+        //   .where('cedula', data.cedula)
+        //   .select('id')
+
+        return
+      }
+
+      const userFound = await this._userTable
+        .where('cedula', data.cedula)
+        .select('id')
+
+      if (userFound.length) {
+        throw 'El usuario ya se encuentra registrado'
+      }
+
       const userAdded = await this._userTable.insert(data)
 
       if (!userAdded.length) {
-        throw 'No se pudo agregar el usuario en la base de datos'
+        throw 'No se pudo agregar el usuario'
       }
 
       return userAdded

@@ -12,14 +12,14 @@ export default class Database<T extends {} = any, R = any[]> {
   constructor() {
     this._dbClient = 'mysql2'
     this._host = process.env.DB_HOST!
-    this._port = 3306
+    this._port = Number(process.env.DB_PORT!) || 3306
     this._user = process.env.DB_USER!
     this._password = process.env.DB_PASS!
     this._dbName = process.env.DB_NAME!
     this._db = this.createConnection()
   }
 
-  createConnection() {
+  private createConnection() {
     return knex<T, R[]>({
       client: this._dbClient,
       connection: {

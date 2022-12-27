@@ -3,16 +3,15 @@ import { useEffect, useState } from 'react'
 import { Flex, FormControl, FormLabel, Select, Text } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
 import { usePDF } from '@react-pdf/renderer'
-import { MyModal, ReportFilter, TextInput } from '.'
-import { useAdmin } from '@/hooks/useAdmin'
-import { useAuth } from '@/hooks/useAuth'
+import { MyModal, UsersReportPDF, TextInput } from '.'
+import { useAdmin, useAuth } from '@/hooks'
 
-interface UsersReportProps {
+interface UsersModalReportProps {
   isOpen: boolean
   onClose: () => void
 }
 
-const UsersReport: FCC<UsersReportProps> = ({ isOpen, onClose }) => {
+const UsersModalReport: FCC<UsersModalReportProps> = ({ isOpen, onClose }) => {
   const { admin } = useAuth()
   const { users, quizzes } = useAdmin()
   const {
@@ -29,7 +28,7 @@ const UsersReport: FCC<UsersReportProps> = ({ isOpen, onClose }) => {
 
   const [instance, updateInstance] = usePDF({
     document: (
-      <ReportFilter
+      <UsersReportPDF
         users={usersReport}
         reportDetails={reportDetails}
         admin={admin}
@@ -162,4 +161,4 @@ const UsersReport: FCC<UsersReportProps> = ({ isOpen, onClose }) => {
   )
 }
 
-export default UsersReport
+export default UsersModalReport

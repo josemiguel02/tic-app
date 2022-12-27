@@ -10,46 +10,44 @@ import {
   Flex,
   Icon,
   IconButton,
-  useDisclosure
+  useDisclosure,
+  Badge
 } from '@chakra-ui/react'
 import { TbPencil } from 'react-icons/tb'
 import { FiTrash2 } from 'react-icons/fi'
 import { Dialog } from './Dialog'
 import { ticApi } from '@/api/tic-api'
 import { useAdmin, useAuth } from '@/hooks'
+import { EditAdminModal } from '.'
 
-const labels = [
-  'Cargo',
-  //  'Preguntas',
-  'Opciones'
-]
+const labels = ['Nombre', 'Apellido', 'Cedula', 'Rol', 'Opciones']
+const colors = ['yellow', 'red', 'purple']
+const randomColor = colors[Math.floor(Math.random() * colors.length)]
 
-interface TableQuizzesProps {
-  quizzes: IExamen[]
-}
-
-export const TableQuizzes: FCC<TableQuizzesProps> = ({ quizzes }) => {
-  const [userId, setUserId] = useState<number | null>(null)
-  const [btnLoading, setBtnLoading] = useState(false)
+export const TableAdmins = () => {
+  const [adminId, setAdminId] = useState<number | null>(null)
+  const [deleteBtnLoading, setDeleteBtnLoading] = useState(false)
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const { getQuizzes } = useAdmin()
+  const [editData, setEditData] = useState({} as Partial<AdminDTO>)
+  const [adminIdEdit, setAdminIdEdit] = useState<number | null>(null)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const { admins, getAdmins } = useAdmin()
   const { admin } = useAuth()
 
-  const closeModal = () => {
+  const closeDeleteDialog = () => {
     onClose()
-    setBtnLoading(false)
+    setDeleteBtnLoading(false)
   }
 
-  const handleDeleteQuiz = async () => {
-    setBtnLoading(true)
+  const handleDeleteAdmin = async () => {
+    setDeleteBtnLoading(true)
 
     try {
-      await ticApi.post('/admin/delete-quiz', { id: userId })
-      getQuizzes()
-      closeModal()
+      await ticApi.post('/admin/delete-admin', { id: adminId })
+      getAdmins()
+      closeDeleteDialog()
     } catch (error) {
       console.error(error)
-    } finally {
     }
   }
 
@@ -88,47 +86,59 @@ export const TableQuizzes: FCC<TableQuizzesProps> = ({ quizzes }) => {
             </Tr>
           </Thead>
           <Tbody>
-            {quizzes.map(({ id, cargo, preguntas }) => (
+            {admins.map(({ id, nombre, apellido, cedula, rol, rol_id }) => (
               <Tr key={id}>
-                <Td>{cargo}</Td>
-                {/* <Td>{JSON.stringify(preguntas)}</Td> */}
+                <Td>{nombre}</Td>
+                <Td>{apellido}</Td>
+                <Td>{cedula}</Td>
+                <Td>
+                  <Badge colorScheme={rol === 'ADMIN' ? 'green' : randomColor}>
+                    {rol}
+                  </Badge>
+                </Td>
 
                 {admin?.role === 'ADMIN' && (
                   <Td>
                     <Flex gap={4}>
-                      {/* <IconButton
+                      <IconButton
                         size='sm'
-                        border='1px solid'
-                        borderColor='orange.400'
                         color='orange.400'
+                        bgColor='#ED893630'
                         rounded='full'
                         variant='ghost'
-                        aria-label='Editar examen'
+                        aria-label='Edit user'
                         icon={<Icon as={TbPencil} boxSize={5} />}
+                        transitionDuration='500ms'
                         _hover={{
-                          bgColor: 'blackAlpha.200'
+                          bgColor: '#ED893650'
                         }}
                         _active={{
-                          bgColor: 'blackAlpha.300'
+                          bgColor: '#ED893660'
                         }}
-                      /> */}
+                        onClick={() => {
+                          setAdminIdEdit(id)
+                          setEditData({ nombre, apellido, rol_id, cedula })
+                          setShowEditModal(true)
+                        }}
+                      />
 
                       <IconButton
                         size='sm'
-                        border='1px solid red'
-                        color='red'
+                        color='crimson'
+                        bgColor='#DC143C20'
                         rounded='full'
                         variant='ghost'
-                        aria-label='Eliminar examen'
+                        aria-label='Eliminar usuario'
                         icon={<Icon as={FiTrash2} boxSize={5} />}
+                        transitionDuration='500ms'
                         _hover={{
-                          bgColor: 'blackAlpha.200'
+                          bgColor: '#DC143C40'
                         }}
                         _active={{
-                          bgColor: 'blackAlpha.300'
+                          bgColor: '#DC143C50'
                         }}
                         onClick={() => {
-                          setUserId(id)
+                          setAdminId(id)
                           onOpen()
                         }}
                       />
@@ -142,14 +152,21 @@ export const TableQuizzes: FCC<TableQuizzesProps> = ({ quizzes }) => {
       </TableContainer>
 
       <Dialog
-        title='Eliminar Examen'
+        title='Eliminar administrador'
         description='¿Está seguro? No puedes deshacer esta acción después.'
         btnText='Eliminar'
         btnVariant='danger'
         isOpen={isOpen}
         onClose={onClose}
-        onAction={handleDeleteQuiz}
-        btnLoading={btnLoading}
+        onAction={handleDeleteAdmin}
+        btnLoading={deleteBtnLoading}
+      />
+
+      <EditAdminModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        adminId={adminIdEdit}
+        editValues={editData}
       />
     </>
   )

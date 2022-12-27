@@ -16,9 +16,8 @@ import {
 import { TbPencil } from 'react-icons/tb'
 import { FiTrash2 } from 'react-icons/fi'
 import { Dialog } from './Dialog'
-import { quizApi } from '@/api/quiz-api'
-import { useAdmin } from '@/hooks/useAdmin'
-import { useAuth } from '@/hooks/useAuth'
+import { ticApi } from '@/api/tic-api'
+import { useAdmin, useAuth } from '@/hooks'
 import { EditUserModal } from './EditUserModal'
 
 const labels = [
@@ -35,11 +34,7 @@ const labels = [
   'Opciones'
 ]
 
-interface TableUsersProps {
-  // users: IUsuario[]
-}
-
-export const TableUsers: FCC<TableUsersProps> = () => {
+export const TableUsers = () => {
   const [userId, setUserId] = useState<number | null>(null)
   const [userIdEdit, setUserIdEdit] = useState<number | null>(null)
   const [deleteBtnLoading, setDeleteBtnLoading] = useState(false)
@@ -58,7 +53,7 @@ export const TableUsers: FCC<TableUsersProps> = () => {
     setDeleteBtnLoading(true)
 
     try {
-      await quizApi.post('/admin/delete-user', { id: userId })
+      await ticApi.post('/admin/delete-user', { id: userId })
       getUsers()
       closeDeleteDialog()
     } catch (error) {
@@ -89,7 +84,7 @@ export const TableUsers: FCC<TableUsersProps> = () => {
           <Thead bgColor='main'>
             <Tr color='white'>
               {labels.map((label, i) => {
-                if (label === 'Opciones' && admin?.role !== 'admin') {
+                if (label === 'Opciones' && admin?.role !== 'ADMIN') {
                   return null
                 }
 
@@ -136,7 +131,7 @@ export const TableUsers: FCC<TableUsersProps> = () => {
 
                   <Td>{calificacion ?? 'null'}</Td>
 
-                  {admin?.role === 'admin' && (
+                  {admin?.role === 'ADMIN' && (
                     <Td>
                       <Flex gap={4}>
                         <IconButton

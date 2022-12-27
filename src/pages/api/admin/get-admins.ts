@@ -1,19 +1,19 @@
-import { Examen } from '@/database'
+import type { NextApiRequest, NextApiResponse } from 'next'
+import { Admin } from '@/database'
 import { verifyToken } from '@/lib/jwt'
 import { isAdmin } from '@/utils/check-user-type'
-import type { NextApiRequest, NextApiResponse } from 'next'
 
-export default function handlerGetQuizzes(req: NextApiRequest, res: NextApiResponse) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'GET':
-      return getQuizzes(req, res)
+      return getAdmins(req, res)
 
     default:
       return res.status(405).json({ error: `Method ${req.method} Not Allowed` })
   }
 }
 
-async function getQuizzes(req: NextApiRequest, res: NextApiResponse) {
+async function getAdmins(req: NextApiRequest, res: NextApiResponse) {
   const token = req.cookies['auth-token']
 
   if (!token) {
@@ -24,12 +24,12 @@ async function getQuizzes(req: NextApiRequest, res: NextApiResponse) {
     const user = await verifyToken(token)
 
     if (isAdmin(user)) {
-      const quizzes = await new Examen().findMany()
-      return res.status(200).json(quizzes)
+      const admins = await new Admin().findMany()
+      return res.status(200).json(admins)
     }
 
     return res.status(401).json({ msg: 'No estás autorizado para acceder a este contenido' })
   } catch (error) {
-    return res.status(400).json({ msg: error })
+    return res.status(404).json({ msg: error })
   }
 }

@@ -5,7 +5,7 @@ import { verifyToken } from '@/lib/jwt'
 import { Usuario } from '@/database'
 import { isAdmin } from '@/utils/check-user-type'
 import { UserLayout } from '@/layouts'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuth } from '@/hooks'
 
 // export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 //   const token = req.cookies['auth-token']

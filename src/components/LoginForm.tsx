@@ -16,7 +16,7 @@ import {
   useToast
 } from '@chakra-ui/react'
 import { HiOutlineUserCircle, HiOutlineLockClosed } from 'react-icons/hi'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuth } from '@/hooks'
 import { Button } from '.'
 
 export const LoginForm = () => {

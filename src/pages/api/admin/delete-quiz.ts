@@ -1,5 +1,5 @@
-import { Examen } from '@/database'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { Examen } from '@/database'
 
 export default function handlerDeleteQuiz(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
@@ -16,7 +16,7 @@ async function deleteQuiz(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     await new Examen().delete(id)
-    return res.status(200).json({ msg: 'Examen eliminado correctamente', id  })
+    return res.status(200).json({ msg: 'Examen eliminado correctamente' })
   } catch (error) {
     return res.status(400).json(error)
   }
