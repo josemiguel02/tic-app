@@ -20,7 +20,6 @@ interface TypingInputProps {
 }
 
 export const TypingInput: FCC<TypingInputProps> = ({ text, score }) => {
-  const [duration, setDuration] = useState(0)
   const [isFocused, setIsFocused] = useState(false)
   const { finishTyping, finalScore, addFinalScore } = useQuiz()
   const typingRef = useRef<HTMLDivElement>(null)
@@ -31,17 +30,13 @@ export const TypingInput: FCC<TypingInputProps> = ({ text, score }) => {
       charsState,
       currIndex,
       correctChar,
-      errorChar,
-      phase,
-      startTime,
-      endTime
+      phase
     },
-    actions: { insertTyping, resetTyping }
+    actions: { insertTyping }
   } = useTyping(text, {
     countErrors: 'once'
   })
 
-  const WPM =  Math.round(((60 / duration) * correctChar) / 5)
   const accuracy = Math.round(Number(((correctChar / text.length) * 100).toFixed(2)))
 
   const handleKey = (key: any) => {
@@ -50,21 +45,12 @@ export const TypingInput: FCC<TypingInputProps> = ({ text, score }) => {
     }
   }
 
-  //set WPM
-  useEffect(() => {
-    if (phase === 2 && endTime && startTime) {
-      setDuration(Math.floor((endTime - startTime) / 1000))
-    } else {
-      setDuration(0)
-    }
-  }, [phase, startTime, endTime])
-
   // Set Score and finish Typing
   useEffect(() => {
     if (phase === PhaseType.Ended) {
       finishTyping()
 
-      const typingScore = accuracy * score / 100
+      const typingScore = (accuracy * score) / 100
 
       // Aumentar score
       addFinalScore((myScore.current += typingScore))
@@ -77,10 +63,7 @@ export const TypingInput: FCC<TypingInputProps> = ({ text, score }) => {
   }, [])
 
   return (
-    <div
-      // p={4}
-      // border='2px solid blue'
-    >
+    <div>
       <Text color='gray.500' fontSize='sm' mb={5}>
         Haga clic en el texto a continuación y comience a escribir
       </Text>
@@ -98,7 +81,7 @@ export const TypingInput: FCC<TypingInputProps> = ({ text, score }) => {
       >
         <Box
           fontFamily='typingFont'
-          fontSize='3xl'
+          fontSize='1.7rem'
           fontWeight='semibold'
           letterSpacing='wide'
           pointerEvents='none'
@@ -107,7 +90,7 @@ export const TypingInput: FCC<TypingInputProps> = ({ text, score }) => {
           {text.split('').map((letter, idx) => {
             let state = charsState[idx]
             let hightlight = currIndex + 1 === idx
-            let color = state === 0 ? 'gray.600' : state === 1 ? 'green.500' : 'crimson'
+            let color = state === 0 ? 'gray.600' : state === 1 ? 'green.500' : 'red.500'
 
             return (
               <Text
@@ -139,24 +122,6 @@ export const TypingInput: FCC<TypingInputProps> = ({ text, score }) => {
           })}
         </Box>
       </Box>
-
-      {/* <Flex flexDir='column' gap={2} mt={5}>
-        {phase === PhaseType.Ended && startTime && endTime ? (
-          <>
-            <span>
-              WPM (Palabras por minuto): {WPM}
-            </span>
-            <span>
-              Precisión: {accuracy}%
-            </span>
-            <span>Duración: {duration} segundos</span>
-          </>
-        ) : null}
-
-        <Text>Index Actual: {currIndex}</Text>
-        <Text>Carácteres correctos: {correctChar}</Text>
-        <Text>Carácteres erroneos: {errorChar}</Text>
-      </Flex> */}
     </div>
   )
 }

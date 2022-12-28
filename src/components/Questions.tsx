@@ -14,7 +14,7 @@ import {
 import { AnimatePresence, motion, Variants } from 'framer-motion'
 import { IoRadioButtonOff, IoRadioButtonOnOutline } from 'react-icons/io5'
 import { useQuiz, useAuth, useUI } from '@/hooks'
-import { Button, Dialog, TypingInput } from '@/components'
+import { Button, Dialog, TypingInput, TypingInputAlt } from '@/components'
 import { ticApi } from '@/api/tic-api'
 
 const variants: Variants = {
@@ -47,6 +47,25 @@ export const Questions = () => {
   const [btnLoading, setBtnLoading] = useState(false)
   const hasMoreQuestions = currentItem <= questions.length - 1
   const { isOpen, onOpen, onClose } = useDisclosure()
+
+  // console.log(questionsSliced[0].enunciado)
+
+  const typingComponents = [
+    <TypingInput
+      key={0}
+      text={questionsSliced[0]?.enunciado}
+      score={questionsSliced[0]?.puntaje}
+    />,
+    <TypingInputAlt
+      key={0}
+      text={questionsSliced[0]?.enunciado}
+      score={questionsSliced[0]?.puntaje}
+    />
+  ]
+
+  const RandomComponent: FCC = () => {
+    return typingComponents[Math.floor(Math.random() * typingComponents.length)]
+  }
 
   const nextQuestionTyping = () => {
     if (hasMoreQuestions) {
@@ -146,10 +165,16 @@ export const Questions = () => {
 
                 {examen.tipo === 'tipeo' ? (
                   <>
-                    <TypingInput
+                    {/* <TypingInput
+                      text={examen.enunciado}
+                      score={examen.puntaje}
+                    /> */}
+
+                    <TypingInputAlt
                       text={examen.enunciado}
                       score={examen.puntaje}
                     />
+
                     <Button
                       mt={4}
                       alignSelf='flex-end'

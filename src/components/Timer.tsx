@@ -9,9 +9,6 @@ const renderer = ({ minutes, seconds, completed }: CountdownRenderProps) => {
 
   return (
     <Flex gap={2} align='center'>
-      {/* https://github.com/ndresx/react-countdown/blob/master/examples/src/CountdownApi.tsx */}
-      {/* <button onClick={() => api.start()}>Comenzar</button> */}
-
       <Text fontWeight='semibold' fontSize='1.2rem'>
         {minutes}m:{seconds}s
       </Text>
@@ -35,9 +32,7 @@ export const Timer: FCC<CounterProps> = React.memo(() => {
       <Countdown
         date={Date.now() + 120000}
         renderer={renderer}
-        // #TODO: Cuando se haga el complete del tiempo mostar un Modal diciendo que se ha acabado
-        // y tiene que enviar el examen, nada más.
-        onComplete={onOpenFinishDialog}
+        // onComplete={onOpenFinishDialog}
       />
     </Flex>
   )

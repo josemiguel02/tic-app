@@ -8,15 +8,13 @@ export class Usuario extends Database<IUsuario, IUsuario[]> {
       const [user] = await this._userTable
         .join('examen', 'usuario.examen_id', 'examen.id')
         .where('usuario.id', id)
-        .select(
-          'examen.preguntas'
-        )
+        .select('examen.preguntas')
 
       if (!user) {
         throw 'El usuario no se encuentra registrado'
       }
 
-      if(!user.preguntas.length) {
+      if (!user.preguntas.length) {
         throw 'El usuario no tiene asignado un examen'
       }
 
@@ -75,7 +73,8 @@ export class Usuario extends Database<IUsuario, IUsuario[]> {
           'examen_terminado',
           'usuario.examen_id',
           'fecha_examen'
-        ).first()
+        )
+        .first()
 
       if (!user) {
         throw 'El usuario no se encuentra registrado'
@@ -106,7 +105,8 @@ export class Usuario extends Database<IUsuario, IUsuario[]> {
           'examen_terminado',
           'usuario.examen_id',
           'fecha_examen'
-        ).first()
+        )
+        .first()
 
       if (!user) {
         throw 'El usuario no se encuentra registrado'
@@ -122,6 +122,14 @@ export class Usuario extends Database<IUsuario, IUsuario[]> {
     try {
       // Validar para cuando se inserte varios usuarios
       if (Array.isArray(data)) {
+        const usersFound = await Promise.all(
+          data.map(async u => {
+            return await this._userTable.where('cedula', u.cedula).select('id')
+          })
+        )
+
+        console.log(usersFound)
+
         // const usersFound = await this._userTable
         //   .where('cedula', data.cedula)
         //   .select('id')
