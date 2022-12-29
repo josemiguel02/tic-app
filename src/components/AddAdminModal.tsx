@@ -4,7 +4,8 @@ import {
   Select,
   FormControl,
   FormLabel,
-  Text
+  Text,
+  useToast
 } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
 import { TextInput, MyAlert, MyModal } from '.'
@@ -30,6 +31,8 @@ export const AddAdminModal: FCC<AddAdminModalProps> = ({ isOpen, onClose }) => {
     reset
   } = useForm<AdminDTO>()
 
+  const toast = useToast()
+
   const formId = 'addAdminForm'
 
   const closeModal = () => {
@@ -46,9 +49,17 @@ export const AddAdminModal: FCC<AddAdminModalProps> = ({ isOpen, onClose }) => {
     setBtnLoading(true)
 
     try {
-      await ticApi.post('/admin/add-admin', data)
+      const res = await ticApi.post('/admin/add-admin', data)
       getAdmins()
       closeModal()
+
+      toast({
+        title: res.data.msg,
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+        position: 'top-right'
+      })
     } catch (e: any) {
       setError({
         show: true,

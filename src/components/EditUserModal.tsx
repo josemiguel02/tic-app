@@ -4,7 +4,8 @@ import {
   Select,
   FormControl,
   FormLabel,
-  Text
+  Text,
+  useToast
 } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
 import { TextInput } from './TextInput'
@@ -41,6 +42,7 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
     show: false,
     msg: ''
   })
+  const toast = useToast()
 
   const formId = 'addUserForm'
 
@@ -48,9 +50,16 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
     setBtnLoading(true)
 
     try {
-      await ticApi.post('/admin/edit-user', { id: userId, data })
+      const res = await ticApi.post('/admin/edit-user', { id: userId, data })
       getUsers()
       closeModal()
+      toast({
+        title: res.data.msg,
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+        position: 'top-right'
+      })
     } catch (e: any) {
       setError({
         show: true,

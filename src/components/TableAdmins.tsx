@@ -11,7 +11,8 @@ import {
   Icon,
   IconButton,
   useDisclosure,
-  Badge
+  Badge,
+  useToast
 } from '@chakra-ui/react'
 import { TbPencil } from 'react-icons/tb'
 import { FiTrash2 } from 'react-icons/fi'
@@ -33,10 +34,13 @@ export const TableAdmins = () => {
   const [showEditModal, setShowEditModal] = useState(false)
   const { admins, getAdmins } = useAdmin()
   const { admin } = useAuth()
+  const toast = useToast()
   const [error, setError] = useState({
     show: false,
     msg: ''
   })
+
+  const isAdmin = admin?.role !== 'ADMIN'
 
   const closeDeleteDialog = () => {
     onClose()
@@ -51,9 +55,16 @@ export const TableAdmins = () => {
     setDeleteBtnLoading(true)
 
     try {
-      await ticApi.post('/admin/delete-admin', { id: adminId })
+      const res = await ticApi.post('/admin/delete-admin', { id: adminId })
       getAdmins()
       closeDeleteDialog()
+      toast({
+        title: res.data.msg,
+        status: 'info',
+        duration: 3000,
+        isClosable: true,
+        position: 'top-right'
+      })
     } catch (e: any) {
       setError({
         show: true,
@@ -86,7 +97,7 @@ export const TableAdmins = () => {
           <Thead bgColor='main'>
             <Tr color='white'>
               {labels.map((label, i) => {
-                if (label === 'Opciones' && admin?.role !== 'ADMIN') {
+                if ((label === 'Opciones' || label === 'Cedula') && isAdmin) {
                   return null
                 }
 
@@ -103,7 +114,7 @@ export const TableAdmins = () => {
               <Tr key={id}>
                 <Td>{nombre}</Td>
                 <Td>{apellido}</Td>
-                <Td>{cedula}</Td>
+                {!isAdmin && <Td>{cedula}</Td>}
                 <Td>
                   <Badge colorScheme={rol === 'ADMIN' ? 'green' : randomColor}>
                     {rol}

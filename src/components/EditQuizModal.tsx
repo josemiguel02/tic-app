@@ -21,7 +21,8 @@ import {
   Icon,
   IconButton,
   chakra,
-  Box
+  Box,
+  useToast
 } from '@chakra-ui/react'
 import { MyModal } from './MyModal'
 import { nanoid } from 'nanoid'
@@ -134,6 +135,7 @@ const QuizForm: FCC<QuizFormProps> = ({
     control,
     name: 'preguntas'
   })
+  const toast = useToast()
 
   const { errors } = formState
   const formId = 'editQuizForm'
@@ -145,9 +147,16 @@ const QuizForm: FCC<QuizFormProps> = ({
     const datos = { ...data, preguntas: JSON.stringify(data.preguntas) }
 
     try {
-      await ticApi.post('/admin/edit-quiz', { id: quizId, data: datos })
+      const res = await ticApi.post('/admin/edit-quiz', { id: quizId, data: datos })
       getQuizzes()
       closeModal()
+      toast({
+        title: res.data.msg,
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+        position: 'top-right'
+      })
     } catch (e: any) {
       setError({
         show: true,

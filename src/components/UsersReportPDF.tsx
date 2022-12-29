@@ -40,22 +40,23 @@ const Flex: FCC<Partial<FlexProps>> = ({
 
 interface UsersReportPDFProps {
   users: IUsuario[]
+  usersByPostition: IUsuario[]
   admin?: IAdmin
   reportDetails: ReportType
 }
 
 export const UsersReportPDF: FCC<UsersReportPDFProps> = ({
   users,
+  usersByPostition,
   admin,
   reportDetails
 }) => {
   const { position, dateFrom, dateTo } = reportDetails
-
   const date = new Date().toLocaleDateString()
   const dateStart = new Date(`${dateFrom}T00:00`).toLocaleDateString()
   const dateEnd = new Date(`${dateTo}T00:00`).toLocaleDateString()
 
-  const usersQuizPending = users.filter(user => {
+  const usersQuizPending = usersByPostition.filter(user => {
     if (!Boolean(user.examen_terminado) && !user.calificacion) {
       return user
     }
@@ -188,7 +189,7 @@ export const UsersReportPDF: FCC<UsersReportPDFProps> = ({
 
         {/* Total Users */}
         <Flex style={styles.usersCount}>
-          <Text>Total: {users.length} Usuarios</Text>
+          <Text>Total: {usersByPostition.length} Usuarios</Text>
         </Flex>
 
         {/* Pagination Text */}

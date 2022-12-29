@@ -20,13 +20,11 @@ export const middleware = async (req: NextRequest) => {
 
 export const config = {
   matcher: [
-    // #Usuario Normal
     '/inicio',
     '/examen',
     '/examen-terminado',
-    // ? Admin
-    '/dashboard/:path*'
-    // !APIS (todas, menos las de login user, login admin)
-    // '/api/:path*'
+    '/dashboard/:path*',
+    '/api/admin/:path*',
+    '/api/quiz/:path*'
   ]
 }

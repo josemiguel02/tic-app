@@ -4,7 +4,8 @@ import {
   Select,
   FormControl,
   FormLabel,
-  Text
+  Text,
+  useToast
 } from '@chakra-ui/react'
 import { TextInput } from './TextInput'
 import { MyModal } from './MyModal'
@@ -31,6 +32,7 @@ export const AddUserModal: FCC<AddUserModalProps> = ({ isOpen, onClose }) => {
     show: false,
     msg: ''
   })
+  const toast = useToast()
 
   const formId = 'addUserForm'
 
@@ -48,9 +50,17 @@ export const AddUserModal: FCC<AddUserModalProps> = ({ isOpen, onClose }) => {
     setBtnLoading(true)
 
     try {
-      await ticApi.post('/admin/add-user', data)
+      const res = await ticApi.post('/admin/add-user', data)
+      console.log(res.data.msg)
       getUsers()
       closeModal()
+      toast({
+        title: res.data.msg,
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+        position: 'top-right'
+      })
     } catch (e: any) {
       setError({
         show: true,

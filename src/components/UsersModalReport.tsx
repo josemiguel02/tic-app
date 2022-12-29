@@ -23,13 +23,14 @@ const UsersModalReport: FCC<UsersModalReportProps> = ({ isOpen, onClose }) => {
   } = useForm<ReportType>()
 
   const [usersReport, setUsersReport] = useState<IUsuario[]>([])
-
+  const [usersByPostition, setUsersByPostition] = useState<IUsuario[]>([])
   const [reportDetails, setReportDetails] = useState({} as ReportType)
 
   const [instance, updateInstance] = usePDF({
     document: (
       <UsersReportPDF
         users={usersReport}
+        usersByPostition={usersByPostition}
         reportDetails={reportDetails}
         admin={admin}
       />
@@ -41,9 +42,10 @@ const UsersModalReport: FCC<UsersModalReportProps> = ({ isOpen, onClose }) => {
   const dateTo = watch('dateTo')
 
   useEffect(() => {
-    const usersByPostition = users.filter(user => user.cargo === position)
+    const usersPos = users.filter(user => user.cargo === position)
+    setUsersByPostition(usersPos)
 
-    const usersFiltered = usersByPostition.filter(user => {
+    const usersFiltered = usersPos.filter(user => {
       const date = new Date(user.fecha_examen!).getTime()
       const start = new Date(`${dateFrom}T00:00`).getTime()
       const end = new Date(`${dateTo}T00:00`).getTime()
@@ -59,7 +61,7 @@ const UsersModalReport: FCC<UsersModalReportProps> = ({ isOpen, onClose }) => {
 
   useEffect(() => {
     updateInstance()
-  }, [usersReport, admin, reportDetails])
+  }, [usersReport, usersByPostition, admin, reportDetails])
 
   const handleGenerateReport = () => {
     navigateToReport()

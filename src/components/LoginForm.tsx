@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import Router from 'next/router'
+import NextImage from 'next/image'
 import { useForm } from 'react-hook-form'
 import {
+  Box,
   Card,
   Checkbox,
   Flex,
@@ -73,17 +75,33 @@ export const LoginForm = () => {
     <Card
       color='none'
       bgColor='white'
-      p={{ base: '3.5rem 2rem', md: '5rem 3.5rem' }}
+      p={{ base: '3.5rem 2rem', md: '3.5rem 3rem' }}
       shadow='xl'
       display='flex'
       flexDir='column'
-      gap={10}
+      gap={8}
       rounded='lg'
       w='30rem'
     >
-      <Heading size='xl' alignSelf='center'>
-        Iniciar Sesión
-      </Heading>
+      <Flex flexDir='column' align='center'>
+        <picture>
+          <NextImage
+            priority
+            src='/static/img/tic-icon.svg'
+            width={100}
+            height={50}
+            alt='Logo TIC'
+            style={{
+              objectFit: 'cover',
+              alignSelf: 'center'
+            }}
+          />
+        </picture>
+
+        <Heading as='h1' fontSize={{ base: '3xl', md: '4xl' }} size='xl'>
+          Iniciar Sesión
+        </Heading>
+      </Flex>
 
       <Flex
         as='form'
@@ -93,7 +111,7 @@ export const LoginForm = () => {
         onSubmit={handleSubmit(onLogin)}
       >
         <FormControl>
-          <FormLabel fontWeight='normal'>Cédula de Identidad </FormLabel>
+          <FormLabel fontWeight='normal'>Cédula de Identidad</FormLabel>
 
           <InputGroup>
             <InputLeftElement>
@@ -103,7 +121,7 @@ export const LoginForm = () => {
             <Input
               type='text'
               bgColor='#C9C9C95d'
-              placeholder='09xxxxxxx'
+              placeholder='Ingrese su cédula'
               variant='filled'
               {...register('identification', {
                 required: 'Este campo es requerido'
@@ -130,7 +148,7 @@ export const LoginForm = () => {
             <Input
               type='password'
               bgColor='#C9C9C95d'
-              placeholder='*********'
+              placeholder='Ingrese su contraseña'
               variant='filled'
               {...register('password', {
                 required: 'Este campo es requerido',
@@ -150,8 +168,9 @@ export const LoginForm = () => {
 
         <Checkbox
           colorScheme='blue'
+          borderColor='gray.400'
           isChecked={isAdmin}
-          onChange={(e) => setIsAdmin(e.target.checked)}
+          onChange={e => setIsAdmin(e.target.checked)}
         >
           Administrador
         </Checkbox>

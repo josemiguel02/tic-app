@@ -11,7 +11,8 @@ import {
   Icon,
   IconButton,
   useDisclosure,
-  Badge
+  Badge,
+  useToast
 } from '@chakra-ui/react'
 import { TbPencil } from 'react-icons/tb'
 import { FiTrash2 } from 'react-icons/fi'
@@ -49,6 +50,8 @@ export const TableUsers = () => {
     msg: ''
   })
 
+  const toast = useToast()
+
   const closeDeleteDialog = () => {
     onClose()
     setDeleteBtnLoading(false)
@@ -62,9 +65,16 @@ export const TableUsers = () => {
     setDeleteBtnLoading(true)
 
     try {
-      await ticApi.post('/admin/delete-user', { id: userId })
+      const res = await ticApi.post('/admin/delete-user', { id: userId })
       getUsers()
       closeDeleteDialog()
+      toast({
+        title: res.data.msg,
+        status: 'info',
+        duration: 3000,
+        isClosable: true,
+        position: 'top-right'
+      })
     } catch (e: any) {
       setError({
         show: true,

@@ -19,7 +19,8 @@ import {
   Select,
   Icon,
   IconButton,
-  chakra
+  chakra,
+  useToast
 } from '@chakra-ui/react'
 import { MyModal } from './MyModal'
 import { nanoid } from 'nanoid'
@@ -62,6 +63,7 @@ export const AddQuizModal: FCC<AddQuizModalProps> = ({ isOpen, onClose }) => {
     show: false,
     msg: ''
   })
+  const toast = useToast()
 
   const { errors } = formState
   const formId = 'addQuizForm'
@@ -98,9 +100,16 @@ export const AddQuizModal: FCC<AddQuizModalProps> = ({ isOpen, onClose }) => {
     const datos = { ...data, preguntas: JSON.stringify(data.preguntas) }
 
     try {
-      await ticApi.post('/admin/add-quiz', datos)
+      const res = await ticApi.post('/admin/add-quiz', datos)
       getQuizzes()
       closeModal()
+      toast({
+        title: res.data.msg,
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+        position: 'top-right'
+      })
     } catch (e: any) {
       setError({
         show: true,

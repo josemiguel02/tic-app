@@ -10,7 +10,7 @@ export const MainLayout: FCC<MainLayoutProps> = ({ children, title }) => {
     <React.Fragment>
       <Head>
         <title>{title}</title>
-        <link rel='icon' href='/static/img/favicon.svg' type='image/svg+xml' />
+        <link rel='icon' href='/static/img/tic-icon.svg' type='image/svg+xml' />
       </Head>
       {children}
     </React.Fragment>
