@@ -161,7 +161,7 @@ export class Usuario extends Database<IUsuario, IUsuario[]> {
     try {
       await this._userTable.where('id', id).update(data)
     } catch (error) {
-      throw error
+      throw 'No se pudo actualizar el usuario'
     }
   }
 
@@ -169,7 +169,7 @@ export class Usuario extends Database<IUsuario, IUsuario[]> {
     try {
       await this._userTable.where('id', id).delete()
     } catch (error) {
-      throw error
+      throw 'No se pudo eliminar el usuario'
     }
   }
 }

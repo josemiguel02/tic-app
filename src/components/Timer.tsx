@@ -32,7 +32,7 @@ export const Timer: FCC<CounterProps> = React.memo(() => {
       <Countdown
         date={Date.now() + 120000}
         renderer={renderer}
-        // onComplete={onOpenFinishDialog}
+        onComplete={onOpenFinishDialog}
       />
     </Flex>
   )

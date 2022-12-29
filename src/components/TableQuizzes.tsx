@@ -17,6 +17,8 @@ import { FiTrash2 } from 'react-icons/fi'
 import { Dialog } from './Dialog'
 import { ticApi } from '@/api/tic-api'
 import { useAdmin, useAuth } from '@/hooks'
+import { EditQuizModal } from './EditQuizModal'
+import { MyAlert } from '.'
 
 const labels = [
   'Cargo',
@@ -32,12 +34,23 @@ export const TableQuizzes: FCC<TableQuizzesProps> = ({ quizzes }) => {
   const [userId, setUserId] = useState<number | null>(null)
   const [btnLoading, setBtnLoading] = useState(false)
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [quizIdEdit, setQuizIdEdit] = useState<number | null>(null)
+  const [quizEditData, setQuizEditData] = useState({} as Partial<ExamenDTO>)
   const { getQuizzes } = useAdmin()
   const { admin } = useAuth()
+  const [error, setError] = useState({
+    show: false,
+    msg: ''
+  })
 
-  const closeModal = () => {
+  const closeDialog = () => {
     onClose()
     setBtnLoading(false)
+    setError({
+      show: false,
+      msg: ''
+    })
   }
 
   const handleDeleteQuiz = async () => {
@@ -46,10 +59,14 @@ export const TableQuizzes: FCC<TableQuizzesProps> = ({ quizzes }) => {
     try {
       await ticApi.post('/admin/delete-quiz', { id: userId })
       getQuizzes()
-      closeModal()
-    } catch (error) {
-      console.error(error)
-    } finally {
+      closeDialog()
+    } catch (e: any) {
+      setError({
+        show: true,
+        msg: e.response.data
+      })
+      setBtnLoading(false)
+      console.error(e)
     }
   }
 
@@ -96,7 +113,7 @@ export const TableQuizzes: FCC<TableQuizzesProps> = ({ quizzes }) => {
                 {admin?.role === 'ADMIN' && (
                   <Td>
                     <Flex gap={4}>
-                      {/* <IconButton
+                      <IconButton
                         size='sm'
                         border='1px solid'
                         borderColor='orange.400'
@@ -111,7 +128,12 @@ export const TableQuizzes: FCC<TableQuizzesProps> = ({ quizzes }) => {
                         _active={{
                           bgColor: 'blackAlpha.300'
                         }}
-                      /> */}
+                        onClick={() => {
+                          setQuizIdEdit(id)
+                          setQuizEditData({ cargo, preguntas })
+                          setShowEditModal(true)
+                        }}
+                      />
 
                       <IconButton
                         size='sm'
@@ -147,9 +169,23 @@ export const TableQuizzes: FCC<TableQuizzesProps> = ({ quizzes }) => {
         btnText='Eliminar'
         btnVariant='danger'
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={closeDialog}
         onAction={handleDeleteQuiz}
         btnLoading={btnLoading}
+        error={
+          <MyAlert
+            show={error.show}
+            onClose={() => setError({ ...error, show: false })}
+            description={error.msg}
+          />
+        }
+      />
+
+      <EditQuizModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        quizId={quizIdEdit!}
+        quizValues={quizEditData}
       />
     </>
   )

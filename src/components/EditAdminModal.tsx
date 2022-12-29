@@ -14,7 +14,7 @@ import { ticApi } from '@/api/tic-api'
 interface EditAdminModalProps {
   isOpen: boolean
   onClose: () => void
-  adminId: number | null
+  adminId: number
   editValues: Partial<AdminDTO>
 }
 

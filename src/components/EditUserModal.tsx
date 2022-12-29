@@ -11,6 +11,7 @@ import { TextInput } from './TextInput'
 import { MyModal } from './MyModal'
 import { useAdmin } from '@/hooks'
 import { ticApi } from '@/api/tic-api'
+import { MyAlert } from '.'
 
 interface EditUserModalProps {
   isOpen: boolean
@@ -36,6 +37,11 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
     reset
   } = useForm<UsuarioDTO>()
 
+  const [error, setError] = useState({
+    show: false,
+    msg: ''
+  })
+
   const formId = 'addUserForm'
 
   const handleEditUser = async (data: UsuarioDTO) => {
@@ -45,8 +51,13 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
       await ticApi.post('/admin/edit-user', { id: userId, data })
       getUsers()
       closeModal()
-    } catch (error) {
-      console.error(error)
+    } catch (e: any) {
+      setError({
+        show: true,
+        msg: e.response.data
+      })
+      setBtnLoading(false)
+      console.error(e)
     }
   }
 
@@ -54,6 +65,10 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
     onClose()
     reset()
     setBtnLoading(false)
+    setError({
+      show: false,
+      msg: ''
+    })
   }
 
   useEffect(() => {
@@ -75,6 +90,12 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
       btnText='Editar'
       btnVariant='warning'
     >
+      <MyAlert
+        show={error.show}
+        onClose={() => setError({ ...error, show: false })}
+        description={error.msg}
+      />
+
       <SimpleGrid
         id={formId}
         as='form'
@@ -85,7 +106,6 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
       >
         <TextInput
           label='Nombre'
-          // defaultValue={nombre}
           isInvalid={!!errors.nombre}
           focusBorderColor={!!errors.nombre ? 'crimson' : 'primary'}
           {...register('nombre', {
@@ -96,7 +116,6 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
 
         <TextInput
           label='Apellido'
-          // defaultValue={apellido}
           isInvalid={!!errors.apellido}
           focusBorderColor={!!errors.apellido ? 'crimson' : 'primary'}
           {...register('apellido', {
@@ -107,7 +126,6 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
 
         <TextInput
           label='Cédula'
-          // defaultValue={cedula}
           isInvalid={!!errors.cedula}
           focusBorderColor={!!errors.cedula ? 'crimson' : 'primary'}
           {...register('cedula', {
@@ -120,7 +138,6 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
           <FormLabel>Cargo</FormLabel>
           <Select
             variant='filled'
-            // defaultValue={examen_id}
             placeholder='Selecciona un cargo...'
             bgColor='#C9C9C95d'
             isInvalid={!!errors.examen_id}
@@ -146,7 +163,6 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
 
         <TextInput
           label='Dirección'
-          // defaultValue={direccion}
           isInvalid={!!errors.direccion}
           focusBorderColor={!!errors.direccion ? 'crimson' : 'primary'}
           {...register('direccion', {
@@ -157,7 +173,6 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
 
         <TextInput
           label='Celular'
-          // defaultValue={celular}
           isInvalid={!!errors.celular}
           focusBorderColor={!!errors.celular ? 'crimson' : 'primary'}
           {...register('celular', {
@@ -168,7 +183,6 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
 
         <TextInput
           label='Modelo'
-          // defaultValue={modelo}
           isInvalid={!!errors.modelo}
           focusBorderColor={!!errors.modelo ? 'crimson' : 'primary'}
           {...register('modelo', {
@@ -181,7 +195,6 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
           <FormLabel>Operadora</FormLabel>
           <Select
             variant='filled'
-            // defaultValue={operadora}
             placeholder='Selecciona una operadora...'
             bgColor='#C9C9C95d'
             isInvalid={!!errors.operadora}

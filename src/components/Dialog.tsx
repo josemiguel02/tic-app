@@ -19,6 +19,7 @@ interface DialogProps {
   onClose?: () => void
   onAction?: () => void
   btnLoading?: boolean
+  error?: React.ReactElement
 }
 
 export const Dialog: FCC<DialogProps> = ({
@@ -31,7 +32,8 @@ export const Dialog: FCC<DialogProps> = ({
   showBtnCancel = true,
   onAction,
   btnLoading,
-  children
+  children,
+  error
 }) => {
   const cancelRef = useRef(null)
 
@@ -49,7 +51,10 @@ export const Dialog: FCC<DialogProps> = ({
             {title}
           </AlertDialogHeader>
 
-          <AlertDialogBody>{description ?? children}</AlertDialogBody>
+          <AlertDialogBody>
+            {error}
+            {description ?? children}
+          </AlertDialogBody>
 
           <AlertDialogFooter gap={3}>
             {showBtnCancel && (

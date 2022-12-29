@@ -19,6 +19,7 @@ import { Dialog } from './Dialog'
 import { ticApi } from '@/api/tic-api'
 import { useAdmin, useAuth } from '@/hooks'
 import { EditUserModal } from './EditUserModal'
+import { MyAlert } from '.'
 
 const labels = [
   'Nombre',
@@ -43,10 +44,18 @@ export const TableUsers = () => {
   const [showEditModal, setShowEditModal] = useState(false)
   const { getUsers, usersFiltered } = useAdmin()
   const { admin } = useAuth()
+  const [error, setError] = useState({
+    show: false,
+    msg: ''
+  })
 
   const closeDeleteDialog = () => {
     onClose()
     setDeleteBtnLoading(false)
+    setError({
+      show: false,
+      msg: ''
+    })
   }
 
   const handleDeleteUser = async () => {
@@ -56,9 +65,13 @@ export const TableUsers = () => {
       await ticApi.post('/admin/delete-user', { id: userId })
       getUsers()
       closeDeleteDialog()
-    } catch (error) {
-      console.error(error)
-    } finally {
+    } catch (e: any) {
+      setError({
+        show: true,
+        msg: e.response.data
+      })
+      setDeleteBtnLoading(false)
+      console.error(e)
     }
   }
 
@@ -201,9 +214,16 @@ export const TableUsers = () => {
         btnText='Eliminar'
         btnVariant='danger'
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={closeDeleteDialog}
         onAction={handleDeleteUser}
         btnLoading={deleteBtnLoading}
+        error={
+          <MyAlert
+            show={error.show}
+            onClose={() => setError({ ...error, show: false })}
+            description={error.msg}
+          />
+        }
       />
 
       <EditUserModal

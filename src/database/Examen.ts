@@ -19,15 +19,9 @@ export class Examen extends Database<IExamen, IExamen[]> {
 
   async create(data: ExamenDTO) {
     try {
-      const quizAdded = await this._quizTable.insert(data)
-
-      if (!quizAdded.length) {
-        throw 'No se pudo agregar el examen en la base de datos'
-      }
-
-      return quizAdded
+      await this._quizTable.insert(data)
     } catch (error) {
-      throw error
+      throw 'No se pudo agregar el examen'
     }
   }
 
@@ -35,7 +29,7 @@ export class Examen extends Database<IExamen, IExamen[]> {
     try {
       await this._quizTable.where('id', id).update(data)
     } catch (error) {
-      throw error
+      throw 'No se pudo actualizar el examen'
     }
   }
 
@@ -43,7 +37,7 @@ export class Examen extends Database<IExamen, IExamen[]> {
     try {
       await this._quizTable.where('id', id).delete()
     } catch (error) {
-      throw error
+      throw 'No se pudo eliminar el examen'
     }
   }
 }

@@ -28,6 +28,7 @@ import { TextInput } from './TextInput'
 import { ticApi } from '@/api/tic-api'
 import { useAdmin } from '@/hooks'
 import { BsFillImageFill } from 'react-icons/bs'
+import { MyAlert } from '.'
 
 interface AddQuizModalProps {
   isOpen: boolean
@@ -50,21 +51,22 @@ export const AddQuizModal: FCC<AddQuizModalProps> = ({ isOpen, onClose }) => {
       preguntas: [
         {
           id: nanoid(15),
-          // enunciado: undefined,
           opciones: [{ id: nanoid(15) }],
           respuesta: undefined
-          // puntaje: 0
         }
       ]
     }
   })
 
-  const { errors, isDirty, dirtyFields, isSubmitted } = formState
+  const [error, setError] = useState({
+    show: false,
+    msg: ''
+  })
+
+  const { errors } = formState
   const formId = 'addQuizForm'
 
-  // console.log({ isDirty, dirtyFields })
-
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append } = useFieldArray({
     name: 'preguntas',
     control
   })
@@ -82,15 +84,16 @@ export const AddQuizModal: FCC<AddQuizModalProps> = ({ isOpen, onClose }) => {
         ]
       },
       { keepDirtyValues: false, keepDirty: false, keepDefaultValues: false }
-      // reset({}, { keepDefaultValues: true, keepDirtyValues: false })
     )
 
     setBtnLoading(false)
+    setError({
+      show: false,
+      msg: ''
+    })
   }
 
   const handleAddQuiz = async (data: ExamenDTO) => {
-    // console.log(data)
-    // TODO: Arreglar el state que se queda dirty en los campos de Options.
     setBtnLoading(true)
     const datos = { ...data, preguntas: JSON.stringify(data.preguntas) }
 
@@ -98,8 +101,13 @@ export const AddQuizModal: FCC<AddQuizModalProps> = ({ isOpen, onClose }) => {
       await ticApi.post('/admin/add-quiz', datos)
       getQuizzes()
       closeModal()
-    } catch (error) {
-      console.error(error)
+    } catch (e: any) {
+      setError({
+        show: true,
+        msg: e.response.data
+      })
+      setBtnLoading(false)
+      console.error(e)
     }
   }
 
@@ -111,6 +119,12 @@ export const AddQuizModal: FCC<AddQuizModalProps> = ({ isOpen, onClose }) => {
       formID={formId}
       btnLoading={btnLoading}
     >
+      <MyAlert
+        show={error.show}
+        onClose={() => setError({ ...error, show: false })}
+        description={error.msg}
+      />
+
       <Flex
         id={formId}
         as='form'
@@ -323,16 +337,6 @@ const Options: FCC<OptionsProps> = ({
     <Flex flexDir='column' gap={2}>
       {fields.map((option, optionIndex) => (
         <Flex key={option.id} gap={4}>
-          {/* <input
-            type='radio'
-            {...radioField}
-            value={optionIndex}
-            onChange={(e) => {
-              console.log(e.target.value)
-              radioField.onChange(Number(e.target.value))
-            }}
-          /> */}
-
           <div>
             <chakra.input
               type='radio'
@@ -384,9 +388,9 @@ const Options: FCC<OptionsProps> = ({
               }
               {...register(
                 `preguntas.${index}.opciones.${optionIndex}.nombre`,
-                {
-                  required: 'Este campo es requerido'
-                }
+                // {
+                //   required: 'Este campo es requerido'
+                // }
               )}
               error={
                 !!errors.preguntas?.[index]?.opciones?.[optionIndex]?.nombre ? (

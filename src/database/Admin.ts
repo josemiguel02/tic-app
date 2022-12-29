@@ -98,7 +98,7 @@ export class Admin extends Database<IAdministrador, IAdministrador[]> {
     try {
       await this._adminTable.where('id', id).update(data)
     } catch (error) {
-      throw error
+      throw 'No se pudo actualizar el administrador'
     }
   }
 
@@ -106,7 +106,7 @@ export class Admin extends Database<IAdministrador, IAdministrador[]> {
     try {
       await this._adminTable.where('id', id).delete()
     } catch (error) {
-      throw error
+      throw 'No se pudo eliminar el administrador'
     }
   }
 }

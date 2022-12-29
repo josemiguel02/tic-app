@@ -165,15 +165,17 @@ export const Questions = () => {
 
                 {examen.tipo === 'tipeo' ? (
                   <>
-                    {/* <TypingInput
-                      text={examen.enunciado}
-                      score={examen.puntaje}
-                    /> */}
-
-                    <TypingInputAlt
-                      text={examen.enunciado}
-                      score={examen.puntaje}
-                    />
+                    {user?.position === 'DIGITADOR' ? (
+                      <TypingInputAlt
+                        text={examen.enunciado}
+                        score={examen.puntaje}
+                      />
+                    ) : (
+                      <TypingInput
+                        text={examen.enunciado}
+                        score={examen.puntaje}
+                      />
+                    )}
 
                     <Button
                       mt={4}
@@ -206,8 +208,8 @@ export const Questions = () => {
 
                     <SimpleGrid
                       gap={8}
-                      columns={{ base: 1, md: 3 }}
-                      justifyItems={{ md: 'center' }}
+                      columns={{ base: 1, lg: 4 }}
+                      justifyItems={{ lg: 'center' }}
                     >
                       {examen.opciones.map((opcion, optionIndex) => (
                         <Flex key={opcion.id} align='center' gap={2}>

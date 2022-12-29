@@ -11,6 +11,7 @@ import { MyModal } from './MyModal'
 import { useAdmin } from '@/hooks'
 import { useForm } from 'react-hook-form'
 import { ticApi } from '@/api/tic-api'
+import { MyAlert } from '.'
 
 interface AddUserModalProps {
   isOpen: boolean
@@ -26,6 +27,10 @@ export const AddUserModal: FCC<AddUserModalProps> = ({ isOpen, onClose }) => {
     formState: { errors },
     reset
   } = useForm<UsuarioDTO>()
+  const [error, setError] = useState({
+    show: false,
+    msg: ''
+  })
 
   const formId = 'addUserForm'
 
@@ -33,6 +38,10 @@ export const AddUserModal: FCC<AddUserModalProps> = ({ isOpen, onClose }) => {
     onClose()
     reset()
     setBtnLoading(false)
+    setError({
+      show: false,
+      msg: ''
+    })
   }
 
   const handleAddUser = async (data: UsuarioDTO) => {
@@ -42,9 +51,13 @@ export const AddUserModal: FCC<AddUserModalProps> = ({ isOpen, onClose }) => {
       await ticApi.post('/admin/add-user', data)
       getUsers()
       closeModal()
-    } catch (error) {
-      console.error(error)
-    } finally {
+    } catch (e: any) {
+      setError({
+        show: true,
+        msg: e.response.data
+      })
+      setBtnLoading(false)
+      console.error(e)
     }
   }
 
@@ -56,6 +69,12 @@ export const AddUserModal: FCC<AddUserModalProps> = ({ isOpen, onClose }) => {
       formID={formId}
       btnLoading={btnLoading}
     >
+      <MyAlert
+        show={error.show}
+        onClose={() => setError({ ...error, show: false })}
+        description={error.msg}
+      />
+
       <SimpleGrid
         id={formId}
         as='form'
@@ -163,7 +182,7 @@ export const AddUserModal: FCC<AddUserModalProps> = ({ isOpen, onClose }) => {
               required: 'Este campo es requerido'
             })}
           >
-            {['CLARO', 'MOVISTAR', 'TUENTI', 'CNT'].map((item) => (
+            {['CLARO', 'MOVISTAR', 'TUENTI', 'CNT'].map(item => (
               <option key={item} value={item}>
                 {item}
               </option>

@@ -16,12 +16,7 @@ export const TypingInputAlt: FCC<TypingInputAltProps> = ({ text, score }) => {
   const myScore = useRef(finalScore)
 
   const {
-    states: {
-      charsState,
-      currIndex,
-      phase,
-      correctChar
-    },
+    states: { charsState, currIndex, phase, correctChar },
     actions: { insertTyping }
   } = useTyping(text, {
     skipCurrentWordOnSpace: false,
@@ -30,7 +25,9 @@ export const TypingInputAlt: FCC<TypingInputAltProps> = ({ text, score }) => {
 
   const [currWordPos, setCurrWordPos] = useState([-1, -1])
 
-  const accuracy = Math.round(Number(((correctChar / text.length) * 100).toFixed(2)))
+  const accuracy = Math.round(
+    Number(((correctChar / text.length) * 100).toFixed(2))
+  )
 
   //checks whether the word is correct while the user is typing
   useEffect(() => {
@@ -133,50 +130,47 @@ export const TypingInputAlt: FCC<TypingInputAltProps> = ({ text, score }) => {
             let bgStyle = shouldHightlight ? 'primary' : ''
 
             return (
-              <Text
-                as='span'
-                key={letter + i}
-                color={colorStyle}
-                bg={bgStyle}
-              >
+              <Text as='span' key={letter + i} color={colorStyle} bg={bgStyle}>
                 {letter}
               </Text>
             )
           })}
         </Box>
 
-        <Box my={10}>
-          <Input
-            type='text'
-            variant='filled'
-            ref={inputRef}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                submitWord()
+        {phase !== PhaseType.Ended && (
+          <Box my={10}>
+            <Input
+              type='text'
+              variant='filled'
+              ref={inputRef}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  submitWord()
+                }
+              }}
+              onChange={e => {
+                setTypingInput(e.target.value)
+              }}
+              value={typingInput}
+              autoCorrect='off'
+              autoCapitalize='none'
+              spellCheck={false}
+              placeholder={
+                phase !== 1
+                  ? 'Escriba aquí... (Presione enter o espacio para enviar la palabra)'
+                  : ''
               }
-            }}
-            onChange={e => {
-              setTypingInput(e.target.value)
-            }}
-            value={typingInput}
-            autoCorrect='off'
-            autoCapitalize='none'
-            spellCheck={false}
-            placeholder={
-              phase !== 1
-                ? 'Escriba aquí... (Presione enter o espacio para enviar la palabra)'
-                : ''
-            }
-            _focus={{
-              borderColor: !typingInput.length
-                ? 'gray.500'
-                : typedWrong
-                  ? 'red.500'
-                  : 'green.500'
-            }}
-          />
-        </Box>
+              _focus={{
+                borderColor: !typingInput.length
+                  ? 'gray.500'
+                  : typedWrong
+                    ? 'red.500'
+                    : 'green.500'
+              }}
+            />
+          </Box>
+        )}
       </div>
     </div>
   )

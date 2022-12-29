@@ -1,6 +1,6 @@
-
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Dispatch, SetStateAction } from 'react'
 import {
+  FormProvider,
   useForm,
   useFieldArray,
   Control,
@@ -8,7 +8,8 @@ import {
   UseFormWatch,
   FormState,
   useController,
-  UseFormResetField
+  UseFormResetField,
+  useFormContext
 } from 'react-hook-form'
 import {
   Button,
@@ -19,104 +20,158 @@ import {
   Select,
   Icon,
   IconButton,
-  chakra
+  chakra,
+  Box
 } from '@chakra-ui/react'
 import { MyModal } from './MyModal'
 import { nanoid } from 'nanoid'
 import { MyInput } from './MyInput'
 import { TextInput } from './TextInput'
-import { ticApi } from '@/api/tic-api'
-import { useAdmin } from '@/hooks'
 import { BsFillImageFill } from 'react-icons/bs'
+import { MyAlert } from '.'
+import { useAdmin } from '@/hooks'
+import { ticApi } from '@/api/tic-api'
+import { IoTextOutline } from 'react-icons/io5'
+import { MdClose } from 'react-icons/md'
 
 interface EditQuizModalProps {
   isOpen: boolean
   onClose: () => void
+  quizId: number
+  quizValues: Partial<ExamenDTO>
 }
 
-export const EditQuizModal: FCC<EditQuizModalProps> = ({ isOpen, onClose }) => {
+export const EditQuizModal: FCC<EditQuizModalProps> = ({
+  isOpen,
+  onClose,
+  quizId,
+  quizValues
+}) => {
   const [btnLoading, setBtnLoading] = useState(false)
-  const { getQuizzes } = useAdmin()
-  const {
-    register,
-    control,
-    handleSubmit,
-    watch,
-    formState,
-    reset,
-    resetField
-  } = useForm<ExamenDTO>({
+  const [error, setError] = useState({
+    show: false,
+    msg: ''
+  })
+
+  const methods = useForm<ExamenDTO>({
     defaultValues: {
-      preguntas: [
-        {
-          id: nanoid(15),
-          // enunciado: undefined,
-          opciones: [{ id: nanoid(15) }],
-          respuesta: undefined
-          // puntaje: 0
-        }
-      ]
+      cargo: '',
+      preguntas: [{ id: nanoid(15), puntaje: 0 }]
     }
   })
 
-  const { errors, isDirty, dirtyFields, isSubmitted } = formState
-  const formId = 'addQuizForm'
+  useEffect(() => {
+    const entries = Object.entries(quizValues)
+    entries.forEach(([key, value]) => {
+      methods.setValue(key as any, value)
+    })
 
-  // console.log({ isDirty, dirtyFields })
-
-  const { fields, append, remove } = useFieldArray({
-    name: 'preguntas',
-    control
-  })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quizValues])
 
   const closeModal = () => {
     onClose()
-    reset(
-      {
-        preguntas: [
-          {
-            id: nanoid(15),
-            opciones: [{ id: nanoid(15) }],
-            respuesta: undefined
-          }
-        ]
-      },
-      { keepDirtyValues: false, keepDirty: false, keepDefaultValues: false }
-      // reset({}, { keepDefaultValues: true, keepDirtyValues: false })
-    )
-
+    methods.reset()
     setBtnLoading(false)
+    setError({
+      show: false,
+      msg: ''
+    })
   }
 
-  const handleAddQuiz = async (data: ExamenDTO) => {
-    // console.log(data)
-    // TODO: Arreglar el state que se queda dirty en los campos de Options.
-    setBtnLoading(true)
-    const datos = { ...data, preguntas: JSON.stringify(data.preguntas) }
-
-    try {
-      await ticApi.post('/admin/add-quiz', datos)
-      getQuizzes()
-      closeModal()
-    } catch (error) {
-      console.error(error)
-    }
-  }
+  const formId = 'editQuizForm'
 
   return (
     <MyModal
-      title='Agregar nuevo examen'
+      title='Editar examen'
       isOpen={isOpen}
       onClose={closeModal}
       formID={formId}
       btnLoading={btnLoading}
+      btnText='Editar'
+      btnVariant='warning'
+      size={{ base: 'full', sm: '2xl' }}
     >
+      <FormProvider {...methods}>
+        <QuizForm
+          error={error}
+          setError={setError}
+          closeModal={closeModal}
+          setBtnLoading={setBtnLoading}
+          quizId={quizId}
+        />
+      </FormProvider>
+    </MyModal>
+  )
+}
+
+interface QuizFormProps {
+  error: {
+    show: boolean
+    msg: string
+  }
+  setError: Dispatch<
+    SetStateAction<{
+      show: boolean
+      msg: string
+    }>
+  >
+  closeModal: () => void
+  setBtnLoading: Dispatch<SetStateAction<boolean>>
+  quizId: number
+}
+
+const QuizForm: FCC<QuizFormProps> = ({
+  error,
+  setError,
+  closeModal,
+  setBtnLoading,
+  quizId
+}) => {
+  const { register, handleSubmit, formState, watch, control, resetField } =
+    useFormContext<ExamenDTO>()
+  const { fields, append } = useFieldArray({
+    control,
+    name: 'preguntas'
+  })
+
+  const { errors } = formState
+  const formId = 'editQuizForm'
+
+  const { getQuizzes } = useAdmin()
+
+  const handleEditQuiz = async (data: ExamenDTO) => {
+    setBtnLoading(true)
+    const datos = { ...data, preguntas: JSON.stringify(data.preguntas) }
+
+    try {
+      await ticApi.post('/admin/edit-quiz', { id: quizId, data: datos })
+      getQuizzes()
+      closeModal()
+    } catch (e: any) {
+      setError({
+        show: true,
+        msg: e.response.data
+      })
+      setBtnLoading(false)
+      console.error(e)
+    }
+  }
+
+  return (
+    <>
+      <MyAlert
+        show={error.show}
+        onClose={() => setError({ ...error, show: false })}
+        description={error.msg}
+      />
+
       <Flex
         id={formId}
         as='form'
         gap={5}
         flexDir='column'
-        onSubmit={handleSubmit(handleAddQuiz)}
+        onSubmit={handleSubmit(handleEditQuiz)}
       >
         <TextInput
           label='Cargo'
@@ -154,7 +209,7 @@ export const EditQuizModal: FCC<EditQuizModalProps> = ({ isOpen, onClose }) => {
             append({
               id: nanoid(15),
               enunciado: '',
-              opciones: [{ id: nanoid(15) }],
+              opciones: [],
               puntaje: 0,
               respuesta: undefined,
               tipo: '' as any
@@ -167,7 +222,7 @@ export const EditQuizModal: FCC<EditQuizModalProps> = ({ isOpen, onClose }) => {
           Agregar preguntas
         </Button>
       </Flex>
-    </MyModal>
+    </>
   )
 }
 
@@ -296,49 +351,43 @@ const QuestionItem: FCC<QuestionsArrayProps> = ({
 
 interface OptionsProps {
   index: number
-  control: Control<ExamenDTO>
   register: UseFormRegister<ExamenDTO>
   formState: FormState<ExamenDTO>
 }
 
 const Options: FCC<OptionsProps> = ({
   index,
-  control,
   register,
   formState: { errors }
 }) => {
+  const [showOptionText, setShowOptionText] = useState<number[]>([])
   const [showOptionImg, setShowOptionImg] = useState<number[]>([])
+
+  let { control, watch } = useFormContext<ExamenDTO>()
+
   const { fields, append } = useFieldArray({
-    name: `preguntas.${index}.opciones`,
-    control
+    control,
+    name: `preguntas.${index}.opciones`
   })
 
-  const { field: radioField, formState: radioState } = useController({
+  const { field: radioField } = useController({
     name: `preguntas.${index}.respuesta`,
     control,
     rules: { required: 'Escoge una opción como respuesta correcta' }
   })
 
+  const currentAnswerValue = watch(`preguntas.${index}.respuesta`)
+
   return (
     <Flex flexDir='column' gap={2}>
       {fields.map((option, optionIndex) => (
         <Flex key={option.id} gap={4}>
-          {/* <input
-            type='radio'
-            {...radioField}
-            value={optionIndex}
-            onChange={(e) => {
-              console.log(e.target.value)
-              radioField.onChange(Number(e.target.value))
-            }}
-          /> */}
-
           <div>
             <chakra.input
               type='radio'
               {...radioField}
               value={optionIndex}
-              onChange={(e) => {
+              onChange={e => {
                 console.log(e.target.value)
                 radioField.onChange(Number(e.target.value))
               }}
@@ -346,7 +395,6 @@ const Options: FCC<OptionsProps> = ({
               boxSize={4}
               mt={3}
               border='2px solid'
-              borderColor='gray.500'
               rounded='full'
               display='inline-grid'
               placeItems='center'
@@ -357,9 +405,16 @@ const Options: FCC<OptionsProps> = ({
                 display: 'inline-block',
                 bg: 'primary',
                 rounded: 'full',
-                transform: 'scale(0)',
+                transform:
+                  currentAnswerValue === optionIndex ? 'scale(1)' : 'scale(0)',
                 transition: 'transform 250ms ease-in-out'
               }}
+              borderColor={
+                currentAnswerValue !== undefined &&
+                currentAnswerValue === optionIndex
+                  ? 'primary'
+                  : 'gray.500'
+              }
               sx={{
                 '&:checked::before': {
                   transform: 'scale(1)'
@@ -371,81 +426,136 @@ const Options: FCC<OptionsProps> = ({
             />
           </div>
 
-          <div>
-            <MyInput
-              placeholder={`Opción ${optionIndex + 1}`}
-              isInvalid={
-                !!errors.preguntas?.[index]?.opciones?.[optionIndex]?.nombre
-              }
-              focusBorderColor={
-                !!errors.preguntas?.[index]?.opciones?.[optionIndex]?.nombre
-                  ? 'crimson'
-                  : 'primary'
-              }
-              {...register(
-                `preguntas.${index}.opciones.${optionIndex}.nombre`,
-                {
-                  required: 'Este campo es requerido'
-                }
-              )}
-              error={
-                !!errors.preguntas?.[index]?.opciones?.[optionIndex]?.nombre ? (
-                  <Text as='small' variant='textError'>
+          {showOptionText.includes(optionIndex) ||
+            watch(`preguntas.${index}.opciones.${optionIndex}.nombre`) ? (
+              <Box pos='relative'>
+                <MyInput
+                  placeholder={`Opción ${optionIndex + 1}`}
+                  isInvalid={
+                    !!errors.preguntas?.[index]?.opciones?.[optionIndex]?.nombre
+                  }
+                  focusBorderColor={
+                    !!errors.preguntas?.[index]?.opciones?.[optionIndex]?.nombre
+                      ? 'crimson'
+                      : 'primary'
+                  }
+                  {...register(
+                    `preguntas.${index}.opciones.${optionIndex}.nombre`,
                     {
-                      errors.preguntas?.[index]?.opciones?.[optionIndex]?.nombre
-                        ?.message
+                      required: 'Este campo es requerido'
                     }
-                  </Text>
-                ) : undefined
-              }
-            />
-          </div>
+                  )}
+                  error={
+                    !!errors.preguntas?.[index]?.opciones?.[optionIndex]
+                      ?.nombre ? (
+                        <Text as='small' variant='textError'>
+                          {
+                            errors.preguntas?.[index]?.opciones?.[optionIndex]
+                              ?.nombre?.message
+                          }
+                        </Text>
+                      ) : undefined
+                  }
+                />
 
-          {showOptionImg.includes(optionIndex) ? (
-            <div>
-              <MyInput
-                placeholder='URL de la imagen'
-                isInvalid={
-                  !!errors.preguntas?.[index]?.opciones?.[optionIndex]?.img
-                }
-                focusBorderColor={
-                  !!errors.preguntas?.[index]?.opciones?.[optionIndex]?.img
-                    ? 'crimson'
-                    : 'primary'
-                }
-                {...register(`preguntas.${index}.opciones.${optionIndex}.img`, {
-                  required: 'Este campo es requerido'
-                })}
-                error={
-                  !!errors.preguntas?.[index]?.opciones?.[optionIndex]?.img ? (
-                    <Text as='small' variant='textError'>
-                      {
-                        errors.preguntas?.[index]?.opciones?.[optionIndex]?.img
-                          ?.message
-                      }
-                    </Text>
-                  ) : undefined
+                <IconButton
+                  pos='absolute'
+                  top='50%'
+                  right={2}
+                  transform='translateY(-50%)'
+                  size='sm'
+                  variant='ghost'
+                  rounded='full'
+                  aria-label='remove option text'
+                  title='Eliminar texto'
+                  icon={<Icon as={MdClose} boxSize={4} color='primary' />}
+                  onClick={() =>
+                    setShowOptionText([])
+                  }
+                  _hover={{
+                    bgColor: 'whiteAlpha.200'
+                  }}
+                />
+              </Box>
+            ) : (
+              <IconButton
+                size='sm'
+                variant='ghost'
+                rounded='full'
+                aria-label='add option text'
+                title='Agregar texto'
+                icon={<Icon as={IoTextOutline} boxSize={5} />}
+                onClick={() =>
+                  setShowOptionText([...showOptionText, optionIndex])
                 }
               />
-            </div>
-          ) : (
-            <IconButton
-              size='sm'
-              variant='ghost'
-              rounded='full'
-              aria-label='add option image'
-              title='Agregar imagen'
-              icon={<Icon as={BsFillImageFill} boxSize={5} />}
-              onClick={() => setShowOptionImg([...showOptionImg, optionIndex])}
-            />
-          )}
+            )}
+
+          {showOptionImg.includes(optionIndex) ||
+            watch(`preguntas.${index}.opciones.${optionIndex}.img`) ? (
+              <Box pos='relative'>
+                <MyInput
+                  placeholder='URL de la imagen'
+                  isInvalid={
+                    !!errors.preguntas?.[index]?.opciones?.[optionIndex]?.img
+                  }
+                  focusBorderColor={
+                    !!errors.preguntas?.[index]?.opciones?.[optionIndex]?.img
+                      ? 'crimson'
+                      : 'primary'
+                  }
+                  {...register(`preguntas.${index}.opciones.${optionIndex}.img`, {
+                    required: 'Este campo es requerido'
+                  })}
+                  error={
+                    !!errors.preguntas?.[index]?.opciones?.[optionIndex]?.img ? (
+                      <Text as='small' variant='textError'>
+                        {
+                          errors.preguntas?.[index]?.opciones?.[optionIndex]?.img
+                            ?.message
+                        }
+                      </Text>
+                    ) : undefined
+                  }
+                />
+
+                <IconButton
+                  pos='absolute'
+                  top='50%'
+                  right={2}
+                  transform='translateY(-50%)'
+                  size='sm'
+                  variant='ghost'
+                  rounded='full'
+                  aria-label='remove option img'
+                  title='Eliminar imagen'
+                  icon={<Icon as={MdClose} boxSize={4} color='primary' />}
+                  onClick={() =>
+                    setShowOptionImg([])
+                  }
+                  _hover={{
+                    bgColor: 'whiteAlpha.200'
+                  }}
+                />
+              </Box>
+            ) : (
+              <IconButton
+                size='sm'
+                variant='ghost'
+                rounded='full'
+                aria-label='add option image'
+                title='Agregar imagen'
+                icon={<Icon as={BsFillImageFill} boxSize={5} />}
+                onClick={() => setShowOptionImg([...showOptionImg, optionIndex])}
+              />
+            )}
         </Flex>
       ))}
 
       <Flex flexDir='column' gap={2} mt={2}>
-        {!!radioState.errors.preguntas?.[index]?.respuesta && (
+        {!!errors.preguntas?.[index]?.respuesta && (
           <Text as='small' variant='textError'>
-            {radioState.errors.preguntas?.[index]?.respuesta?.message}
+            {errors.preguntas?.[index]?.respuesta?.message}
           </Text>
         )}
 

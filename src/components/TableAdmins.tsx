@@ -18,7 +18,7 @@ import { FiTrash2 } from 'react-icons/fi'
 import { Dialog } from './Dialog'
 import { ticApi } from '@/api/tic-api'
 import { useAdmin, useAuth } from '@/hooks'
-import { EditAdminModal } from '.'
+import { EditAdminModal, MyAlert } from '.'
 
 const labels = ['Nombre', 'Apellido', 'Cedula', 'Rol', 'Opciones']
 const colors = ['yellow', 'red', 'purple']
@@ -33,10 +33,18 @@ export const TableAdmins = () => {
   const [showEditModal, setShowEditModal] = useState(false)
   const { admins, getAdmins } = useAdmin()
   const { admin } = useAuth()
+  const [error, setError] = useState({
+    show: false,
+    msg: ''
+  })
 
   const closeDeleteDialog = () => {
     onClose()
     setDeleteBtnLoading(false)
+    setError({
+      show: false,
+      msg: ''
+    })
   }
 
   const handleDeleteAdmin = async () => {
@@ -46,8 +54,13 @@ export const TableAdmins = () => {
       await ticApi.post('/admin/delete-admin', { id: adminId })
       getAdmins()
       closeDeleteDialog()
-    } catch (error) {
-      console.error(error)
+    } catch (e: any) {
+      setError({
+        show: true,
+        msg: e.response.data
+      })
+      setDeleteBtnLoading(false)
+      console.error(e)
     }
   }
 
@@ -157,15 +170,22 @@ export const TableAdmins = () => {
         btnText='Eliminar'
         btnVariant='danger'
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={closeDeleteDialog}
         onAction={handleDeleteAdmin}
         btnLoading={deleteBtnLoading}
+        error={
+          <MyAlert
+            show={error.show}
+            onClose={() => setError({ ...error, show: false })}
+            description={error.msg}
+          />
+        }
       />
 
       <EditAdminModal
         isOpen={showEditModal}
         onClose={() => setShowEditModal(false)}
-        adminId={adminIdEdit}
+        adminId={adminIdEdit!}
         editValues={editData}
       />
     </>

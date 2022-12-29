@@ -16,7 +16,7 @@ async function addQuiz(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     await new Examen().create(data)
-    return res.status(200).json({ msg: 'Examen agregado correctamente'  })
+    return res.status(200).json({ msg: 'Examen agregado correctamente' })
   } catch (error) {
     return res.status(400).json(error)
   }
