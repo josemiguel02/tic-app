@@ -336,7 +336,7 @@ const Options: FCC<OptionsProps> = ({
     control
   })
 
-  const { field: radioField, formState: radioState } = useController({
+  const { field: radioField } = useController({
     name: `preguntas.${index}.respuesta`,
     control,
     rules: { required: 'Escoge una opción como respuesta correcta' }
@@ -397,9 +397,9 @@ const Options: FCC<OptionsProps> = ({
               }
               {...register(
                 `preguntas.${index}.opciones.${optionIndex}.nombre`,
-                // {
-                //   required: 'Este campo es requerido'
-                // }
+                {
+                  required: 'Este campo es requerido'
+                }
               )}
               error={
                 !!errors.preguntas?.[index]?.opciones?.[optionIndex]?.nombre ? (
@@ -417,7 +417,7 @@ const Options: FCC<OptionsProps> = ({
           {showOptionImg.includes(optionIndex) ? (
             <div>
               <MyInput
-                placeholder='URL de la imagen'
+                placeholder='Ruta local de la imagen'
                 isInvalid={
                   !!errors.preguntas?.[index]?.opciones?.[optionIndex]?.img
                 }
@@ -456,9 +456,9 @@ const Options: FCC<OptionsProps> = ({
       ))}
 
       <Flex flexDir='column' gap={2} mt={2}>
-        {!!radioState.errors.preguntas?.[index]?.respuesta && (
+        {!!errors.preguntas?.[index]?.respuesta && (
           <Text as='small' variant='textError'>
-            {radioState.errors.preguntas?.[index]?.respuesta?.message}
+            {errors.preguntas?.[index]?.respuesta?.message}
           </Text>
         )}
 

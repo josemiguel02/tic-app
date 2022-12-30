@@ -143,21 +143,6 @@ const UsersModalReport: FCC<UsersModalReportProps> = ({ isOpen, onClose }) => {
           })}
           errorMsg={!!errors.dateTo ? errors.dateTo?.message : undefined}
         />
-
-        {/* <FormControl>
-        <FormLabel>Formato</FormLabel>
-        <Select
-          variant='filled'
-          placeholder='Selecciona un formato...'
-          bgColor='#C9C9C95d'
-        >
-          {['Excel', 'PDF'].map((format) => (
-            <option key={format} value={format}>
-              {format}
-            </option>
-          ))}
-        </Select>
-      </FormControl> */}
       </Flex>
     </MyModal>
   )

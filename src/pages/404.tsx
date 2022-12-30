@@ -1,7 +1,7 @@
 import React from 'react'
 import Head from 'next/head'
 import NextLink from 'next/link'
-import { Box, Button, Flex, Grid, Heading, Text } from '@chakra-ui/react'
+import { Button, Flex, Grid, Heading, Text } from '@chakra-ui/react'
 
 export default function Custom404() {
   return (

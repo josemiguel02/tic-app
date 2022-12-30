@@ -1,5 +1,4 @@
 import Router from 'next/router'
-import NextLink from 'next/link'
 import {
   Box,
   Card,
@@ -51,17 +50,11 @@ const HomePage = () => {
               No puedes seleccionar ninguna opción una vez que pase el tiempo,
               ya que el exámen se cerrará.
             </ListItem>
-            <ListItem>
-              Al final del exámen podrás obtener tu calificación.
-            </ListItem>
           </OrderedList>
         </Box>
 
         <Button
           mt={4}
-          // as={NextLink}
-          // href='/examen'
-          // replace la ruta.
           onClick={() => Router.replace('/examen')}
           alignSelf='center'
           text='Comenzar examen'

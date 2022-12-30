@@ -504,7 +504,7 @@ const Options: FCC<OptionsProps> = ({
             watch(`preguntas.${index}.opciones.${optionIndex}.img`) ? (
               <Box pos='relative'>
                 <MyInput
-                  placeholder='URL de la imagen'
+                  placeholder='Ruta local de la imagen'
                   isInvalid={
                     !!errors.preguntas?.[index]?.opciones?.[optionIndex]?.img
                   }

@@ -20,8 +20,6 @@ const QUIZ_INITIAL_STATE: IQuizState = {
 
 const QuizProvider: FCC = ({ children }) => {
   const [state, dispatch] = useReducer(QuizReducer, QUIZ_INITIAL_STATE)
-  // Usar el useState normal para ocultar las preguntas
-  // const [secretQuestions, setSecretQuestions] = useState([])
 
   const setQuestionsSliced = (data: IPreguntas[]) => {
     dispatch({ type: '[QUIZ] - SLICE QUESTIONS', payload: data })
@@ -35,11 +33,9 @@ const QuizProvider: FCC = ({ children }) => {
 
     try {
       const { data } = await ticApi.get<IPreguntas[]>('/quiz/get-questions')
-
-      const shuffleArr = data.sort(() => Math.random() - 0.5)
-
-      dispatch({ type: '[QUIZ] - SET QUESTIONS', payload: shuffleArr })
-      dispatch({ type: '[QUIZ] - SLICE QUESTIONS', payload: shuffleArr.slice(0, 1) })
+      // const shuffleArr = data.sort(() => Math.random() - 0.5)
+      dispatch({ type: '[QUIZ] - SET QUESTIONS', payload: data })
+      dispatch({ type: '[QUIZ] - SLICE QUESTIONS', payload: data.slice(0, 1) })
     } catch (error) {
       dispatch({ type: '[QUIZ] - SET QUESTIONS', payload: [] })
     }

@@ -62,14 +62,31 @@ export const UsersReportPDF: FCC<UsersReportPDFProps> = ({
     }
   })
 
-  const usersApproved = users.filter(user => {
-    const qualification = user.calificacion ?? 0
-    return qualification >= 7
+  const usersApproved = users.filter(({ calificacion, cargo }) => {
+    if (
+      cargo === 'OPERADORES CDA' ||
+      cargo === 'ASISTENTES CDA' ||
+      cargo === 'ESCANEADOR' ||
+      cargo === 'ASISTENTE ESCANER'
+    ) {
+      return calificacion! >= 18
+    }
+
+    return calificacion! >= 17
   })
 
-  const usersFailed = users.filter(user => {
-    if (user.calificacion || user.examen_terminado) {
-      return user.calificacion! < 7
+  const usersFailed = users.filter(({ calificacion, examen_terminado, cargo }) => {
+    if (calificacion || examen_terminado) {
+      if (
+        cargo === 'OPERADORES CDA' ||
+        cargo === 'ASISTENTES CDA' ||
+        cargo === 'ESCANEADOR' ||
+        cargo === 'ASISTENTE ESCANER'
+      ) {
+        return calificacion! < 18
+      }
+
+      return calificacion! < 17
     }
   })
 
@@ -106,7 +123,7 @@ export const UsersReportPDF: FCC<UsersReportPDFProps> = ({
         </Flex>
 
         {usersApproved.length ? (
-          <Flex column>
+          <Flex column style={{ marginBottom: 30 }}>
             <Text>Aprobados: {usersApproved.length}</Text>
 
             <View style={styles.table}>
@@ -116,16 +133,28 @@ export const UsersReportPDF: FCC<UsersReportPDFProps> = ({
                 <Text style={styles.column}>Cédula</Text>
                 <Text style={styles.column}>Cargo</Text>
                 <Text style={styles.column}>Calificación</Text>
+                <Text style={styles.column}>Fecha examen</Text>
               </Flex>
 
               {usersApproved.map(
-                ({ id, nombre, apellido, cedula, cargo, calificacion }) => (
+                ({
+                  id,
+                  nombre,
+                  apellido,
+                  cedula,
+                  cargo,
+                  calificacion,
+                  fecha_examen
+                }) => (
                   <Flex key={id} style={styles.row}>
                     <Text style={styles.column}>{nombre}</Text>
                     <Text style={styles.column}>{apellido}</Text>
                     <Text style={styles.column}>{cedula}</Text>
                     <Text style={styles.column}>{cargo}</Text>
                     <Text style={styles.column}>{calificacion}</Text>
+                    <Text style={styles.column}>
+                      {new Date(fecha_examen!).toLocaleDateString()}
+                    </Text>
                   </Flex>
                 )
               )}
@@ -134,7 +163,7 @@ export const UsersReportPDF: FCC<UsersReportPDFProps> = ({
         ) : null}
 
         {usersFailed.length ? (
-          <Flex column style={{ marginTop: 30 }}>
+          <Flex column style={{ marginBottom: 30 }}>
             <Text>Reprobados: {usersFailed.length}</Text>
 
             <View style={styles.table}>
@@ -144,16 +173,28 @@ export const UsersReportPDF: FCC<UsersReportPDFProps> = ({
                 <Text style={styles.column}>Cédula</Text>
                 <Text style={styles.column}>Cargo</Text>
                 <Text style={styles.column}>Calificación</Text>
+                <Text style={styles.column}>Fecha examen</Text>
               </Flex>
 
               {usersFailed.map(
-                ({ id, nombre, apellido, cedula, cargo, calificacion }) => (
+                ({
+                  id,
+                  nombre,
+                  apellido,
+                  cedula,
+                  cargo,
+                  calificacion,
+                  fecha_examen
+                }) => (
                   <Flex key={id} style={styles.row}>
                     <Text style={styles.column}>{nombre}</Text>
                     <Text style={styles.column}>{apellido}</Text>
                     <Text style={styles.column}>{cedula}</Text>
                     <Text style={styles.column}>{cargo}</Text>
                     <Text style={styles.column}>{calificacion}</Text>
+                    <Text style={styles.column}>
+                      {new Date(fecha_examen!).toLocaleDateString()}
+                    </Text>
                   </Flex>
                 )
               )}
@@ -162,7 +203,7 @@ export const UsersReportPDF: FCC<UsersReportPDFProps> = ({
         ) : null}
 
         {usersQuizPending.length ? (
-          <Flex column style={{ marginTop: 30 }}>
+          <Flex column style={{ marginBottom: 30 }}>
             <Text>Pendientes: {usersQuizPending.length}</Text>
 
             <View style={styles.table}>
@@ -226,7 +267,7 @@ const styles = StyleSheet.create({
   details: {
     fontSize: 12,
     marginTop: 15,
-    marginBottom: 70,
+    marginBottom: 50,
     justifyContent: 'space-between'
   },
   headerTitle: {
@@ -259,7 +300,7 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   usersCount: {
-    marginTop: 50,
+    marginTop: 30,
     justifyContent: 'flex-end'
   },
   pageNumber: {

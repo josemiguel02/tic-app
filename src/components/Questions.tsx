@@ -16,16 +16,17 @@ import { IoRadioButtonOff, IoRadioButtonOnOutline } from 'react-icons/io5'
 import { useQuiz, useAuth, useUI } from '@/hooks'
 import { Button, Dialog, TypingInput, TypingInputAlt } from '@/components'
 import { ticApi } from '@/api/tic-api'
+import { MdOutlineArrowRightAlt } from 'react-icons/md'
 
 const variants: Variants = {
-  hidden: { opacity: 0, x: 10 },
+  hidden: { opacity: 0, x: 8 },
   enter: {
     opacity: 1,
     x: 0
   },
   exit: {
     opacity: 0,
-    x: -10,
+    x: -8,
     transition: { duration: 0.1, ease: 'easeInOut' }
   }
 }
@@ -47,25 +48,6 @@ export const Questions = () => {
   const [btnLoading, setBtnLoading] = useState(false)
   const hasMoreQuestions = currentItem <= questions.length - 1
   const { isOpen, onOpen, onClose } = useDisclosure()
-
-  // console.log(questionsSliced[0].enunciado)
-
-  const typingComponents = [
-    <TypingInput
-      key={0}
-      text={questionsSliced[0]?.enunciado}
-      score={questionsSliced[0]?.puntaje}
-    />,
-    <TypingInputAlt
-      key={0}
-      text={questionsSliced[0]?.enunciado}
-      score={questionsSliced[0]?.puntaje}
-    />
-  ]
-
-  const RandomComponent: FCC = () => {
-    return typingComponents[Math.floor(Math.random() * typingComponents.length)]
-  }
 
   const nextQuestionTyping = () => {
     if (hasMoreQuestions) {
@@ -207,37 +189,39 @@ export const Questions = () => {
                     </div>
 
                     <SimpleGrid
-                      gap={8}
+                      gap={{ base: 8, lg: 5 }}
                       columns={{ base: 1, lg: 4 }}
-                      justifyItems={{ lg: 'center' }}
                     >
                       {examen.opciones.map((opcion, optionIndex) => (
                         <Flex key={opcion.id} align='center' gap={2}>
-                          <Icon
-                            cursor='pointer'
-                            onClick={() => setMyAnswer(optionIndex)}
-                            boxSize={5}
-                            as={
-                              myAnswer === optionIndex
-                                ? IoRadioButtonOnOutline
-                                : IoRadioButtonOff
-                            }
-                            color={
-                              myAnswer === optionIndex ? 'primary' : 'gray.50'
-                            }
-                            transition='color .3s ease-in-out'
-                            _hover={{ color: 'primary' }}
-                          />
+                          <div>
+                            <Icon
+                              cursor='pointer'
+                              onClick={() => setMyAnswer(optionIndex)}
+                              boxSize={5}
+                              as={
+                                myAnswer === optionIndex
+                                  ? IoRadioButtonOnOutline
+                                  : IoRadioButtonOff
+                              }
+                              color={
+                                myAnswer === optionIndex ? 'primary' : 'gray.50'
+                              }
+                              transition='color .3s ease-in-out'
+                              _hover={{ color: 'primary' }}
+                            />
+                          </div>
+
                           <Flex
                             p={4}
+                            flex={{ lg: 1 }}
                             flexDir='column'
-                            gap={4}
+                            gap={2}
                             justify='center'
                             align='center'
                             border='2px solid transparent'
                             rounded='md'
                             cursor='pointer'
-                            w='200px'
                             onClick={() => setMyAnswer(optionIndex)}
                             transition='border-color .3s ease-in-out'
                             borderColor={
@@ -250,14 +234,20 @@ export const Questions = () => {
                             {opcion.img && (
                               <Image
                                 src={opcion.img}
-                                alt={opcion.img}
-                                boxSize={{ base: '80px', md: '120px' }}
+                                alt='Option image'
+                                boxSize={{ base: '100px', md: '150px' }}
                                 objectFit='contain'
+                                loading='lazy'
                               />
                             )}
 
                             {opcion.nombre && (
-                              <Text color='gray.600'>{opcion.nombre}</Text>
+                              <Text
+                                color='gray.600'
+                                fontSize={{ base: 'sm', lg: 'md' }}
+                              >
+                                {opcion.nombre}
+                              </Text>
                             )}
                           </Flex>
                         </Flex>
@@ -270,6 +260,11 @@ export const Questions = () => {
                       onClick={nextQuestion}
                       variant={hasMoreQuestions ? 'solid' : 'danger'}
                       text={hasMoreQuestions ? 'Siguiente' : 'Finalizar'}
+                      rightIcon={
+                        hasMoreQuestions ? (
+                          <Icon as={MdOutlineArrowRightAlt} boxSize={5} />
+                        ) : undefined
+                      }
                       disabled={myAnswer === null}
                     />
                   </>

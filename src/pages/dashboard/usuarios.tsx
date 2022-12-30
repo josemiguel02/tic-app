@@ -28,10 +28,6 @@ import { useAdmin, useAuth } from '@/hooks'
 import { ticApi } from '@/api/tic-api'
 import { blobToStr } from '@/utils/blob-to-str'
 
-// const ButtonPDF = dynamic(() => import('@/components/ButtonPDF'), {
-//   ssr: false
-// })
-
 const UsersModalReport = dynamic(
   () => import('@/components/UsersModalReport'),
   {
@@ -42,7 +38,7 @@ const UsersModalReport = dynamic(
 export { getServerSideProps } from '@/utils/admin-middleware'
 
 const UsuariosPage = () => {
-  const [txt, setTxt] = useState('')
+  const [, setTxt] = useState('')
   const [showCSVDialog, setShowCSVDialog] = useState(false)
   const [showReportDialog, setShowReportDialog] = useState(false)
   const [csvBtnLoading, setCsvBtnLoading] = useState(false)

@@ -19,16 +19,31 @@ const IndexPage = () => {
           align='center'
           display={{ base: 'none', lg: 'flex' }}
         >
-          <Box as='picture' w={320}>
-            <NextImage
-              priority
-              width={320}
-              height={320}
-              alt='Login Hero'
-              src='/static/img/login-hero.svg'
-              style={{ objectFit: 'cover', width: '100%', height: 'auto' }}
-            />
-          </Box>
+          <Flex flexDir='column' gap={2}>
+            <Box as='picture' w='fit-content' alignSelf='center'>
+              <NextImage
+                priority
+                src='/static/img/logo-tic-light.svg'
+                width={260}
+                height={50}
+                alt='Logo TIC'
+                style={{
+                  objectFit: 'cover'
+                }}
+              />
+            </Box>
+
+            <Box as='picture' w={320}>
+              <NextImage
+                priority
+                width={320}
+                height={320}
+                alt='Login Hero'
+                src='/static/img/login-hero.svg'
+                style={{ objectFit: 'cover', width: '100%', height: 'auto' }}
+              />
+            </Box>
+          </Flex>
         </Flex>
 
         <Flex justify='center' align='center' mx={{ md: 2 }}>

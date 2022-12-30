@@ -7,8 +7,7 @@ import {
   Badge,
   Box,
   Icon,
-  SimpleGrid,
-  chakra
+  SimpleGrid
 } from '@chakra-ui/react'
 import {
   MdOutlineStickyNote2,

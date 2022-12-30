@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Router from 'next/router'
 import NextImage from 'next/image'
-import { useForm } from 'react-hook-form'
+import { useController, useForm } from 'react-hook-form'
 import {
   Box,
   Card,
@@ -25,8 +25,18 @@ export const LoginForm = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
+    control
   } = useForm<UserFormData>()
+
+  const { field: identificationField } = useController({
+    control,
+    name: 'identification',
+    rules: {
+
+    }
+  })
+
   const [btnLoading, setBtnLoading] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
   const { loginUser, loginAdmin } = useAuth()
@@ -75,28 +85,27 @@ export const LoginForm = () => {
     <Card
       color='none'
       bgColor='white'
-      p={{ base: '3.5rem 2rem', md: '3.5rem 3rem' }}
+      p={{ base: '3.5rem 2rem', md: '3.5rem 3rem', lg: '4rem 3.5rem' }}
       shadow='xl'
       display='flex'
       flexDir='column'
-      gap={8}
+      gap={5}
       rounded='lg'
       w='30rem'
     >
       <Flex flexDir='column' align='center'>
-        <picture>
+        <Box as='picture' display={{ lg: 'none' }}>
           <NextImage
             priority
-            src='/static/img/tic-icon.svg'
-            width={100}
+            src='/static/img/logo-tic-dark.svg'
+            width={200}
             height={50}
             alt='Logo TIC'
             style={{
-              objectFit: 'cover',
-              alignSelf: 'center'
+              objectFit: 'cover'
             }}
           />
-        </picture>
+        </Box>
 
         <Heading as='h1' fontSize={{ base: '3xl', md: '4xl' }} size='xl'>
           Iniciar Sesión
