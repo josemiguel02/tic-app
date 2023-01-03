@@ -1,10 +1,12 @@
 import NextImage from 'next/image'
-import { Flex, Text, Box, Button, chakra } from '@chakra-ui/react'
+import { Flex, Text, Box, Button, chakra, Badge } from '@chakra-ui/react'
 import { UserLayout } from '@/layouts'
-import { useAuth } from '@/hooks'
+import { useAuth, useQuiz } from '@/hooks'
+import { NOTE_QUALIFICATION } from '@/utils/constants'
 
 const ExamenTerminadoPage = () => {
   const { logout } = useAuth()
+  const { finalScore } = useQuiz()
 
   return (
     <UserLayout title='Examen terminado'>
@@ -19,21 +21,36 @@ const ExamenTerminadoPage = () => {
 
         <Box maxW='lg' textAlign='center'>
           <Text fontSize='lg' fontWeight='medium'>
-            Gracias has terminado de rendir tu examen, ahora puedes{' '}
-            <chakra.span display='inline-flex'>
-              <Button
-                p={0}
-                h={0}
-                minH={0}
-                variant='ghost'
-                onClick={logout}
-                fontSize='inherit'
-                _hover={{ color: 'primary' }}
-                transition='color .3s ease-in-out'
-              >
-                Cerrar sesión
-              </Button>
-            </chakra.span>
+            Gracias has terminado de rendir tu examen.
+            <Text>
+              {finalScore >= NOTE_QUALIFICATION ? (
+                <Badge colorScheme='green' fontSize='inherit'>
+                  APROBASTE
+                </Badge>
+              ) : (
+                <Badge colorScheme='red' fontSize='inherit'>
+                  REPROBASTE
+                </Badge>
+              )}
+              con: {finalScore}
+            </Text>
+            <Text>
+              Ahora puedes{' '}
+              <chakra.span display='inline-flex'>
+                <Button
+                  p={0}
+                  h={0}
+                  minH={0}
+                  variant='ghost'
+                  onClick={logout}
+                  fontSize='inherit'
+                  _hover={{ color: 'primary' }}
+                  transition='color .3s ease-in-out'
+                >
+                  Cerrar sesión
+                </Button>
+              </chakra.span>
+            </Text>
           </Text>
         </Box>
       </Flex>
