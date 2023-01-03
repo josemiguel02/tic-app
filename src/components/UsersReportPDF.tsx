@@ -1,4 +1,5 @@
 /* eslint-disable jsx-a11y/alt-text */
+import { NOTE_QUALIFICATION } from '@/utils/constants'
 import {
   Page,
   Document,
@@ -63,30 +64,28 @@ export const UsersReportPDF: FCC<UsersReportPDFProps> = ({
   })
 
   const usersApproved = users.filter(({ calificacion, cargo }) => {
-    // if (
-    //   cargo === 'OPERADORES CDA' ||
-    //   cargo === 'ASISTENTES CDA' ||
-    //   cargo === 'ESCANEADOR' ||
-    //   cargo === 'ASISTENTE ESCANER'
-    // ) {
-    //   return calificacion! >= 18
-    // }
+    if (
+      cargo === 'OPERADORES CDA' ||
+      cargo === 'ESCANEADOR' ||
+      cargo === 'ASISTENTE ESCANER'
+    ) {
+      return calificacion! >= 15
+    }
 
-    return calificacion! >= 15
+    return calificacion! >= NOTE_QUALIFICATION
   })
 
   const usersFailed = users.filter(({ calificacion, examen_terminado, cargo }) => {
     if (calificacion || examen_terminado) {
-      // if (
-      //   cargo === 'OPERADORES CDA' ||
-      //   cargo === 'ASISTENTES CDA' ||
-      //   cargo === 'ESCANEADOR' ||
-      //   cargo === 'ASISTENTE ESCANER'
-      // ) {
-      //   return calificacion! < 18
-      // }
+      if (
+        cargo === 'OPERADORES CDA' ||
+        cargo === 'ESCANEADOR' ||
+        cargo === 'ASISTENTE ESCANER'
+      ) {
+        return calificacion! < 15
+      }
 
-      return calificacion! < 15
+      return calificacion! < NOTE_QUALIFICATION
     }
   })
 

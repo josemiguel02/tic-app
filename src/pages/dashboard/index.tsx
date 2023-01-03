@@ -16,6 +16,7 @@ import {
 import { AiOutlineUser } from 'react-icons/ai'
 import { AdminLayout } from '@/layouts'
 import { useAdmin } from '@/hooks'
+import { NOTE_QUALIFICATION } from '@/utils/constants'
 
 export { getServerSideProps } from '@/utils/admin-middleware'
 
@@ -28,8 +29,16 @@ const DashboardPage = () => {
     }
   }).length
 
-  const usersApproved = users.filter(({ calificacion }) => {
-    return calificacion! >= 15
+  const usersApproved = users.filter(({ calificacion, cargo }) => {
+    if (
+      cargo === 'OPERADORES CDA' ||
+      cargo === 'ESCANEADOR' ||
+      cargo === 'ASISTENTE ESCANER'
+    ) {
+      return calificacion! >= 15
+    }
+
+    return calificacion! >= NOTE_QUALIFICATION
   }).length
 
   const usersFailed = users.filter(user => {

@@ -37,8 +37,8 @@ export const LoginForm = () => {
       minLength: {
         value: 10,
         message: 'Mínimo 10 caracteres'
-      },
-      validate: validateIdentification
+      }
+      // validate: validateIdentification
     }
   })
 

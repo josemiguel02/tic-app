@@ -43,7 +43,7 @@ const HomePage = () => {
 
           <OrderedList mt={2} fontSize='md'>
             <ListItem>
-              Tendrás sólo 10 minutos para completar el exámen.
+              Tendrás sólo 4 minutos para completar el exámen.
             </ListItem>
             <ListItem>Debes seleccionar una sola opción.</ListItem>
             <ListItem>
