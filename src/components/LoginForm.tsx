@@ -20,10 +20,10 @@ import {
 import { HiOutlineUserCircle, HiOutlineLockClosed } from 'react-icons/hi'
 import { useAuth } from '@/hooks'
 import { Button } from '.'
+import { validateIdentification } from '@/utils/validations'
 
 export const LoginForm = () => {
   const {
-    register,
     handleSubmit,
     formState: { errors },
     control
@@ -33,7 +33,24 @@ export const LoginForm = () => {
     control,
     name: 'identification',
     rules: {
+      required: 'Este campo es requerido',
+      minLength: {
+        value: 10,
+        message: 'Mínimo 10 caracteres'
+      },
+      validate: validateIdentification
+    }
+  })
 
+  const { field: passwordField } = useController({
+    control,
+    name: 'password',
+    rules: {
+      required: 'Este campo es requerido',
+      minLength: {
+        value: 10,
+        message: 'Mínimo 10 caracteres'
+      }
     }
   })
 
@@ -132,16 +149,20 @@ export const LoginForm = () => {
               bgColor='#C9C9C95d'
               placeholder='Ingrese su cédula'
               variant='filled'
-              {...register('identification', {
-                required: 'Este campo es requerido'
-              })}
+              {...identificationField}
+              value={identificationField.value || ''}
+              onChange={e => {
+                identificationField.onChange(
+                  e.target.value.replace(/[^0-9]/gi, '')
+                )
+              }}
               isInvalid={!!errors.identification}
               focusBorderColor={!!errors.identification ? 'crimson' : 'primary'}
             />
           </InputGroup>
 
           {!!errors.identification && (
-            <Text color='crimson' fontSize='small'>
+            <Text as='small' variant='textError'>
               {errors.identification?.message}
             </Text>
           )}
@@ -159,17 +180,20 @@ export const LoginForm = () => {
               bgColor='#C9C9C95d'
               placeholder='Ingrese su contraseña'
               variant='filled'
-              {...register('password', {
-                required: 'Este campo es requerido',
-                minLength: { value: 10, message: 'Mínimo 10 caracteres' }
-              })}
+              {...passwordField}
+              value={passwordField.value || ''}
+              onChange={e => {
+                passwordField.onChange(
+                  e.target.value.replace(/[^0-9]/gi, '')
+                )
+              }}
               isInvalid={!!errors.password}
               focusBorderColor={!!errors.password ? 'crimson' : 'primary'}
             />
           </InputGroup>
 
           {!!errors.password && (
-            <Text color='crimson' fontSize='small'>
+            <Text as='small' variant='textError'>
               {errors.password?.message}
             </Text>
           )}

@@ -18,7 +18,7 @@ import {
   Button
 } from '@chakra-ui/react'
 import { AdminLayout } from '@/layouts'
-import { TableUsers, AddUserModal, Dialog } from '@/components'
+import { AddUserModal, Dialog } from '@/components'
 import { IoMdAdd } from 'react-icons/io'
 import { FaFileCsv } from 'react-icons/fa'
 import { MdKeyboardArrowRight } from 'react-icons/md'
@@ -34,6 +34,10 @@ const UsersModalReport = dynamic(
     ssr: false
   }
 )
+
+const DataTable = dynamic(() => import('@/components/DataTable'), {
+  loading: () => <CircularProgress isIndeterminate color='primary' />
+})
 
 export { getServerSideProps } from '@/utils/admin-middleware'
 
@@ -147,7 +151,7 @@ const UsuariosPage = () => {
         </Heading>
 
         <Flex mt={5} justify='space-between'>
-          <InputGroup maxW='200px' alignSelf='end'>
+          {/* <InputGroup maxW='200px' alignSelf='end'>
             <InputLeftElement top='50%' transform='translateY(-50%)'>
               <Icon as={BiSearchAlt} boxSize={5} />
             </InputLeftElement>
@@ -165,7 +169,17 @@ const UsuariosPage = () => {
                 onQueryChanged(e.target.value)
               }}
             />
-          </InputGroup>
+          </InputGroup> */}
+
+          <Button
+            size='sm'
+            variant='danger'
+            onClick={() => setShowReportDialog(true)}
+            leftIcon={<Icon as={AiOutlineFilePdf} boxSize={4} />}
+            alignSelf='end'
+          >
+            Generar reporte
+          </Button>
 
           <Flex flexDir='column' gap={2}>
             {admin?.role === 'ADMIN' && (
@@ -175,7 +189,7 @@ const UsuariosPage = () => {
                   leftIcon={<Icon as={IoMdAdd} boxSize={5} />}
                   onClick={onOpen}
                 >
-                  Nuevo usuario
+                  Agregar
                 </Button>
 
                 <Button
@@ -188,27 +202,11 @@ const UsuariosPage = () => {
                 </Button>
               </>
             )}
-
-            {/* <ButtonPDF /> */}
-
-            <Button
-              size='sm'
-              variant='danger'
-              onClick={() => setShowReportDialog(true)}
-              leftIcon={<Icon as={AiOutlineFilePdf} boxSize={4} />}
-            >
-              Generar reporte
-            </Button>
           </Flex>
         </Flex>
 
         <Box mb={6}>
-          {!users.length ? (
-            <CircularProgress isIndeterminate color='primary' />
-          ) : (
-            <TableUsers />
-            // <DataTable />
-          )}
+          <DataTable />
         </Box>
       </AdminLayout>
 

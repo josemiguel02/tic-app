@@ -1,4 +1,5 @@
 import NextLink from 'next/link'
+import dynamic from 'next/dynamic'
 import {
   Box,
   Breadcrumb,
@@ -13,13 +14,16 @@ import {
 import { AdminLayout } from '@/layouts'
 import { IoMdAdd } from 'react-icons/io'
 import { MdKeyboardArrowRight } from 'react-icons/md'
-import { Button, AddQuizModal, TableQuizzes } from '@/components'
-import { useAdmin, useAuth } from '@/hooks'
+import { Button, AddQuizModal } from '@/components'
+import { useAuth } from '@/hooks'
+
+const QuizzesTable = dynamic(() => import('@/components/QuizzesTable'), {
+  loading: () => <CircularProgress isIndeterminate color='primary' />
+})
 
 export { getServerSideProps } from '@/utils/admin-middleware'
 
 const ExamenesPage = () => {
-  const { quizzes } = useAdmin()
   const { admin } = useAuth()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -50,8 +54,7 @@ const ExamenesPage = () => {
           {admin?.role === 'ADMIN' && (
             <Button
               size='sm'
-              text='Nuevo examen'
-              fontSize='.9rem'
+              text='Agregar'
               rightIcon={undefined}
               leftIcon={<Icon as={IoMdAdd} boxSize={5} />}
               onClick={onOpen}
@@ -60,11 +63,7 @@ const ExamenesPage = () => {
         </Flex>
 
         <Box mb={6}>
-          {!quizzes.length ? (
-            <CircularProgress isIndeterminate color='primary' flex='1' />
-          ) : (
-            <TableQuizzes quizzes={quizzes} />
-          )}
+          <QuizzesTable />
         </Box>
       </AdminLayout>
 

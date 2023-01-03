@@ -1,5 +1,10 @@
-import { Questions } from '@/components'
+import dynamic from 'next/dynamic'
+import { CircularProgress } from '@chakra-ui/react'
 import { UserLayout } from '@/layouts'
+
+const Questions = dynamic(() => import('@/components/Questions'), {
+  loading: () => <CircularProgress isIndeterminate color='primary' />
+})
 
 export { getServerSideProps } from '@/utils/user-middleware'
 

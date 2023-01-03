@@ -9,7 +9,6 @@ export const components: ThemeComponents = {
   Button: {
     baseStyle: {
       _hover: { bg: 'none' },
-      // _active: { bg: 'none' },
       _focusVisible: { boxShadow: 'none' },
       fontWeight: 'medium'
     },

@@ -16,7 +16,7 @@ async function addAdmin(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     await new Admin().create(data)
-    return res.status(200).json({ msg: 'Administrador agregado correctamente'  })
+    return res.status(200).json({ msg: 'Administrador agregado correctamente' })
   } catch (error) {
     return res.status(400).json(error)
   }

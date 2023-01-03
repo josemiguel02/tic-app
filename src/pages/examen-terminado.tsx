@@ -1,5 +1,5 @@
 import NextImage from 'next/image'
-import { Flex, Text, Box, Button } from '@chakra-ui/react'
+import { Flex, Text, Box, Button, chakra } from '@chakra-ui/react'
 import { UserLayout } from '@/layouts'
 import { useAuth } from '@/hooks'
 
@@ -20,11 +20,20 @@ const ExamenTerminadoPage = () => {
         <Box maxW='lg' textAlign='center'>
           <Text fontSize='lg' fontWeight='medium'>
             Gracias has terminado de rendir tu examen, ahora puedes{' '}
-            <span>
-              <Button variant='ghost' onClick={logout}>
+            <chakra.span display='inline-flex'>
+              <Button
+                p={0}
+                h={0}
+                minH={0}
+                variant='ghost'
+                onClick={logout}
+                fontSize='inherit'
+                _hover={{ color: 'primary' }}
+                transition='color .3s ease-in-out'
+              >
                 Cerrar sesión
               </Button>
-            </span>
+            </chakra.span>
           </Text>
         </Box>
       </Flex>

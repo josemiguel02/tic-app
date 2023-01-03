@@ -7,10 +7,11 @@ import {
   Text,
   useToast
 } from '@chakra-ui/react'
-import { useForm } from 'react-hook-form'
+import { useForm, useController } from 'react-hook-form'
 import { TextInput, MyAlert, MyModal } from '.'
 import { useAdmin } from '@/hooks'
 import { ticApi } from '@/api/tic-api'
+import { validateIdentification } from '@/utils/validations'
 
 interface EditAdminModalProps {
   isOpen: boolean
@@ -37,10 +38,23 @@ export const EditAdminModal: FCC<EditAdminModalProps> = ({
     handleSubmit,
     formState: { errors },
     reset,
-    setValue
+    setValue,
+    control
   } = useForm<AdminDTO>()
-
   const formId = 'editAdminForm'
+
+  const { field: identificationField } = useController({
+    control,
+    name: 'cedula',
+    rules: {
+      required: 'Este campo es requerido',
+      minLength: {
+        value: 10,
+        message: 'Mínimo 10 caracteres'
+      },
+      validate: validateIdentification
+    }
+  })
 
   const closeModal = () => {
     onClose()
@@ -133,9 +147,11 @@ export const EditAdminModal: FCC<EditAdminModalProps> = ({
           label='Cédula'
           isInvalid={!!errors.cedula}
           focusBorderColor={!!errors.cedula ? 'crimson' : 'primary'}
-          {...register('cedula', {
-            required: 'Este campo es requerido'
-          })}
+          {...identificationField}
+          value={identificationField.value || ''}
+          onChange={e => {
+            identificationField.onChange(e.target.value.replace(/[^0-9]/gi, ''))
+          }}
           errorMsg={!!errors.cedula ? errors.cedula?.message : undefined}
         />
 

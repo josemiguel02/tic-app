@@ -7,12 +7,13 @@ import {
   Text,
   useToast
 } from '@chakra-ui/react'
-import { useForm } from 'react-hook-form'
+import { useForm, useController } from 'react-hook-form'
 import { TextInput } from './TextInput'
 import { MyModal } from './MyModal'
 import { useAdmin } from '@/hooks'
 import { ticApi } from '@/api/tic-api'
 import { MyAlert } from '.'
+import { validateIdentification } from '@/utils/validations'
 
 interface EditUserModalProps {
   isOpen: boolean
@@ -35,7 +36,8 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
     handleSubmit,
     formState: { errors },
     setValue,
-    reset
+    reset,
+    control
   } = useForm<UsuarioDTO>()
 
   const [error, setError] = useState({
@@ -43,8 +45,32 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
     msg: ''
   })
   const toast = useToast()
-
   const formId = 'addUserForm'
+
+  const { field: identificationField } = useController({
+    control,
+    name: 'cedula',
+    rules: {
+      required: 'Este campo es requerido',
+      minLength: {
+        value: 10,
+        message: 'Mínimo 10 caracteres'
+      },
+      validate: validateIdentification
+    }
+  })
+
+  const { field: phoneNumberField } = useController({
+    control,
+    name: 'celular',
+    rules: {
+      required: 'Este campo es requerido',
+      minLength: {
+        value: 10,
+        message: 'Mínimo 10 caracteres'
+      }
+    }
+  })
 
   const handleEditUser = async (data: UsuarioDTO) => {
     setBtnLoading(true)
@@ -137,9 +163,11 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
           label='Cédula'
           isInvalid={!!errors.cedula}
           focusBorderColor={!!errors.cedula ? 'crimson' : 'primary'}
-          {...register('cedula', {
-            required: 'Este campo es requerido'
-          })}
+          {...identificationField}
+          value={identificationField.value || ''}
+          onChange={e => {
+            identificationField.onChange(e.target.value.replace(/[^0-9]/gi, ''))
+          }}
           errorMsg={!!errors.cedula ? errors.cedula?.message : undefined}
         />
 
@@ -184,9 +212,11 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
           label='Celular'
           isInvalid={!!errors.celular}
           focusBorderColor={!!errors.celular ? 'crimson' : 'primary'}
-          {...register('celular', {
-            required: 'Este campo es requerido'
-          })}
+          {...phoneNumberField}
+          value={phoneNumberField.value || ''}
+          onChange={e => {
+            phoneNumberField.onChange(e.target.value.replace(/[^0-9]/gi, ''))
+          }}
           errorMsg={!!errors.celular ? errors.celular?.message : undefined}
         />
 

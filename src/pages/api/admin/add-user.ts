@@ -16,7 +16,7 @@ async function addUser(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     await new Usuario().create(data)
-    return res.status(200).json({ msg: 'Usuario agregado correctamente'  })
+    return res.status(200).json({ msg: 'Usuario agregado correctamente' })
   } catch (error) {
     return res.status(400).json(error)
   }

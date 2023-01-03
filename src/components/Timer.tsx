@@ -9,8 +9,8 @@ const renderer = ({ minutes, seconds, completed }: CountdownRenderProps) => {
 
   return (
     <Flex gap={2} align='center'>
-      <Text fontWeight='semibold' fontSize='1.2rem'>
-        {minutes}m:{seconds}s
+      <Text fontWeight='semibold' fontSize='xl'>
+        {minutes}:{seconds}
       </Text>
       <Icon as={FaRegClock} boxSize={5} />
     </Flex>
@@ -30,9 +30,9 @@ export const Timer: FCC<CounterProps> = React.memo(() => {
     <Flex flexDir='column' align='end' py={3} px={5}>
       <Text>El examen finaliza en:</Text>
       <Countdown
-        date={Date.now() + 120000}
+        date={Date.now() + 600000}
         renderer={renderer}
-        // onComplete={onOpenFinishDialog}
+        onComplete={onOpenFinishDialog}
       />
     </Flex>
   )

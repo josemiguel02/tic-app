@@ -6,7 +6,6 @@ import {
   Heading,
   Text,
   Image,
-  CircularProgress,
   SimpleGrid,
   Icon,
   useDisclosure
@@ -31,7 +30,7 @@ const variants: Variants = {
   }
 }
 
-export const Questions = () => {
+const Questions = () => {
   let {
     questions,
     questionsSliced,
@@ -115,164 +114,160 @@ export const Questions = () => {
   return (
     <>
       <Flex w='full' mb={4}>
-        {!questionsSliced.length ? (
-          <CircularProgress isIndeterminate color='primary' />
-        ) : (
-          <AnimatePresence initial={false} exitBeforeEnter>
-            {questionsSliced.map(examen => (
-              <Card
-                key={examen.id}
-                w='full'
-                bgColor='#fff6'
-                border='1px solid'
-                borderColor='gray.200'
-                p={{ base: '1.5rem', md: '2rem 2.5rem' }}
-                shadow='sm'
-                color='none'
-                rounded='lg'
-                display='flex'
-                flexDir='column'
-                gap={6}
-                as={motion.div}
-                variants={variants}
-                initial='hidden'
-                animate='enter'
-                exit='exit'
-              >
-                <div>
-                  <Text as='small' color='gray.600' fontWeight='medium'>
-                    Pregunta {currentItem} de {questions.length}
-                  </Text>
-                </div>
+        <AnimatePresence initial={false} exitBeforeEnter>
+          {questionsSliced.map(examen => (
+            <Card
+              key={examen.id}
+              w='full'
+              bgColor='#fff6'
+              border='1px solid'
+              borderColor='gray.200'
+              p={{ base: '1.5rem', md: '2rem 2.5rem' }}
+              shadow='sm'
+              color='none'
+              rounded='lg'
+              display='flex'
+              flexDir='column'
+              gap={4}
+              as={motion.div}
+              variants={variants}
+              initial='hidden'
+              animate='enter'
+              exit='exit'
+            >
+              <div>
+                <Text as='small' color='gray.600' fontWeight='medium'>
+                  Pregunta {currentItem} de {questions.length}
+                </Text>
+              </div>
 
-                {examen.tipo === 'tipeo' ? (
-                  <>
-                    {user?.position === 'DIGITADOR' ? (
-                      <TypingInputAlt
-                        text={examen.enunciado}
-                        score={examen.puntaje}
-                      />
-                    ) : (
-                      <TypingInput
-                        text={examen.enunciado}
-                        score={examen.puntaje}
-                      />
-                    )}
-
-                    <Button
-                      mt={4}
-                      alignSelf='flex-end'
-                      onClick={nextQuestionTyping}
-                      bgColor={hasMoreQuestions ? 'primary' : 'red'}
-                      text={hasMoreQuestions ? 'Siguiente' : 'Finalizar'}
-                      disabled={!isFinishTyping}
-                      _hover={{
-                        bgColor: 'transparent',
-                        color: hasMoreQuestions ? 'primary' : 'red',
-                        borderColor: hasMoreQuestions ? 'primary' : 'red'
-                      }}
+              {examen.tipo === 'tipeo' ? (
+                <>
+                  {user?.position === 'DIGITADOR' ? (
+                    <TypingInputAlt
+                      text={examen.enunciado}
+                      score={examen.puntaje}
                     />
-                  </>
-                ) : (
-                  <>
-                    <div>
-                      <Heading
-                        fontSize={{ base: 'lg', md: 'xl' }}
-                        fontWeight='semibold'
-                      >
-                        {examen.enunciado}
-                      </Heading>
+                  ) : (
+                    <TypingInput
+                      text={examen.enunciado}
+                      score={examen.puntaje}
+                    />
+                  )}
 
-                      <Text color='gray.500' fontSize='sm' mt={1}>
-                        Seleccione la opción correcta:
-                      </Text>
-                    </div>
-
-                    <SimpleGrid
-                      gap={{ base: 8, lg: 5 }}
-                      columns={{ base: 1, lg: 4 }}
+                  <Button
+                    mt={4}
+                    alignSelf='flex-end'
+                    onClick={nextQuestionTyping}
+                    bgColor={hasMoreQuestions ? 'primary' : 'red'}
+                    text={hasMoreQuestions ? 'Siguiente' : 'Finalizar'}
+                    disabled={!isFinishTyping}
+                    _hover={{
+                      bgColor: 'transparent',
+                      color: hasMoreQuestions ? 'primary' : 'red',
+                      borderColor: hasMoreQuestions ? 'primary' : 'red'
+                    }}
+                  />
+                </>
+              ) : (
+                <>
+                  <div>
+                    <Heading
+                      fontSize={{ base: 'lg', md: 'xl' }}
+                      fontWeight='semibold'
                     >
-                      {examen.opciones.map((opcion, optionIndex) => (
-                        <Flex key={opcion.id} align='center' gap={2}>
-                          <div>
-                            <Icon
-                              cursor='pointer'
-                              onClick={() => setMyAnswer(optionIndex)}
-                              boxSize={5}
-                              as={
-                                myAnswer === optionIndex
-                                  ? IoRadioButtonOnOutline
-                                  : IoRadioButtonOff
-                              }
-                              color={
-                                myAnswer === optionIndex ? 'primary' : 'gray.50'
-                              }
-                              transition='color .3s ease-in-out'
-                              _hover={{ color: 'primary' }}
-                            />
-                          </div>
+                      {examen.enunciado}
+                    </Heading>
 
-                          <Flex
-                            p={4}
-                            flex={{ lg: 1 }}
-                            flexDir='column'
-                            gap={2}
-                            justify='center'
-                            align='center'
-                            border='2px solid transparent'
-                            rounded='md'
+                    <Text color='gray.500' fontSize='sm' mt={1}>
+                      Seleccione la opción correcta:
+                    </Text>
+                  </div>
+
+                  <SimpleGrid
+                    gap={{ base: 8, lg: 5 }}
+                    columns={{ base: 1, lg: 4 }}
+                  >
+                    {examen.opciones.map((opcion, optionIndex) => (
+                      <Flex key={opcion.id} align='center' gap={2}>
+                        <div>
+                          <Icon
                             cursor='pointer'
                             onClick={() => setMyAnswer(optionIndex)}
-                            transition='border-color .3s ease-in-out'
-                            borderColor={
+                            boxSize={5}
+                            as={
+                              myAnswer === optionIndex
+                                ? IoRadioButtonOnOutline
+                                : IoRadioButtonOff
+                            }
+                            color={
                               myAnswer === optionIndex ? 'primary' : 'gray.50'
                             }
-                            _hover={{
-                              borderColor: 'primary'
-                            }}
-                          >
-                            {opcion.img && (
-                              <Image
-                                src={opcion.img}
-                                alt='Option image'
-                                boxSize={{ base: '100px', md: '150px' }}
-                                objectFit='contain'
-                                loading='lazy'
-                              />
-                            )}
+                            transition='color .3s ease-in-out'
+                            _hover={{ color: 'primary' }}
+                          />
+                        </div>
 
-                            {opcion.nombre && (
-                              <Text
-                                color='gray.600'
-                                fontSize={{ base: 'sm', lg: 'md' }}
-                              >
-                                {opcion.nombre}
-                              </Text>
-                            )}
-                          </Flex>
+                        <Flex
+                          p={4}
+                          flex={{ lg: 1 }}
+                          flexDir='column'
+                          gap={2}
+                          justify='center'
+                          align='center'
+                          border='2px solid transparent'
+                          rounded='md'
+                          cursor='pointer'
+                          onClick={() => setMyAnswer(optionIndex)}
+                          transition='border-color .3s ease-in-out'
+                          borderColor={
+                            myAnswer === optionIndex ? 'primary' : 'gray.50'
+                          }
+                          _hover={{
+                            borderColor: 'primary'
+                          }}
+                        >
+                          {opcion.img && (
+                            <Image
+                              src={opcion.img}
+                              alt='Option image'
+                              boxSize={{ base: '100px', md: '150px' }}
+                              objectFit='contain'
+                              loading='lazy'
+                            />
+                          )}
+
+                          {opcion.nombre && (
+                            <Text
+                              color='gray.600'
+                              fontSize={{ base: 'sm', lg: 'md' }}
+                            >
+                              {opcion.nombre}
+                            </Text>
+                          )}
                         </Flex>
-                      ))}
-                    </SimpleGrid>
+                      </Flex>
+                    ))}
+                  </SimpleGrid>
 
-                    <Button
-                      mt={4}
-                      alignSelf='flex-end'
-                      onClick={nextQuestion}
-                      variant={hasMoreQuestions ? 'solid' : 'danger'}
-                      text={hasMoreQuestions ? 'Siguiente' : 'Finalizar'}
-                      rightIcon={
-                        hasMoreQuestions ? (
-                          <Icon as={MdOutlineArrowRightAlt} boxSize={5} />
-                        ) : undefined
-                      }
-                      disabled={myAnswer === null}
-                    />
-                  </>
-                )}
-              </Card>
-            ))}
-          </AnimatePresence>
-        )}
+                  <Button
+                    mt={4}
+                    alignSelf='flex-end'
+                    onClick={nextQuestion}
+                    variant={hasMoreQuestions ? 'solid' : 'danger'}
+                    text={hasMoreQuestions ? 'Siguiente' : 'Finalizar'}
+                    rightIcon={
+                      hasMoreQuestions ? (
+                        <Icon as={MdOutlineArrowRightAlt} boxSize={5} />
+                      ) : undefined
+                    }
+                    disabled={myAnswer === null}
+                  />
+                </>
+              )}
+            </Card>
+          ))}
+        </AnimatePresence>
       </Flex>
 
       <Dialog
@@ -298,3 +293,5 @@ export const Questions = () => {
     </>
   )
 }
+
+export default Questions

@@ -98,7 +98,7 @@ export const TypingInputAlt: FCC<TypingInputAltProps> = ({ text, score }) => {
   return (
     <div>
       <Text color='gray.500' fontSize='sm' mb={5}>
-        Haga clic en el campo de texto y comience a escribir
+        Haga clic en la entrada de texto y comience a escribir
       </Text>
 
       <div

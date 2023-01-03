@@ -10,9 +10,10 @@ import {
 import { TextInput } from './TextInput'
 import { MyModal } from './MyModal'
 import { useAdmin } from '@/hooks'
-import { useForm } from 'react-hook-form'
+import { useForm, useController } from 'react-hook-form'
 import { ticApi } from '@/api/tic-api'
 import { MyAlert } from '.'
+import { validateIdentification } from '@/utils/validations'
 
 interface AddUserModalProps {
   isOpen: boolean
@@ -26,15 +27,40 @@ export const AddUserModal: FCC<AddUserModalProps> = ({ isOpen, onClose }) => {
     register,
     handleSubmit,
     formState: { errors },
-    reset
+    reset,
+    control
   } = useForm<UsuarioDTO>()
   const [error, setError] = useState({
     show: false,
     msg: ''
   })
   const toast = useToast()
-
   const formId = 'addUserForm'
+
+  const { field: identificationField } = useController({
+    control,
+    name: 'cedula',
+    rules: {
+      required: 'Este campo es requerido',
+      minLength: {
+        value: 10,
+        message: 'Mínimo 10 caracteres'
+      },
+      validate: validateIdentification
+    }
+  })
+
+  const { field: phoneNumberField } = useController({
+    control,
+    name: 'celular',
+    rules: {
+      required: 'Este campo es requerido',
+      minLength: {
+        value: 10,
+        message: 'Mínimo 10 caracteres'
+      }
+    }
+  })
 
   const closeModal = () => {
     onClose()
@@ -51,7 +77,6 @@ export const AddUserModal: FCC<AddUserModalProps> = ({ isOpen, onClose }) => {
 
     try {
       const res = await ticApi.post('/admin/add-user', data)
-      console.log(res.data.msg)
       getUsers()
       closeModal()
       toast({
@@ -117,9 +142,11 @@ export const AddUserModal: FCC<AddUserModalProps> = ({ isOpen, onClose }) => {
           label='Cédula'
           isInvalid={!!errors.cedula}
           focusBorderColor={!!errors.cedula ? 'crimson' : 'primary'}
-          {...register('cedula', {
-            required: 'Este campo es requerido'
-          })}
+          {...identificationField}
+          value={identificationField.value || ''}
+          onChange={e => {
+            identificationField.onChange(e.target.value.replace(/[^0-9]/gi, ''))
+          }}
           errorMsg={!!errors.cedula ? errors.cedula?.message : undefined}
         />
 
@@ -164,9 +191,11 @@ export const AddUserModal: FCC<AddUserModalProps> = ({ isOpen, onClose }) => {
           label='Celular'
           isInvalid={!!errors.celular}
           focusBorderColor={!!errors.celular ? 'crimson' : 'primary'}
-          {...register('celular', {
-            required: 'Este campo es requerido'
-          })}
+          {...phoneNumberField}
+          value={phoneNumberField.value || ''}
+          onChange={e => {
+            phoneNumberField.onChange(e.target.value.replace(/[^0-9]/gi, ''))
+          }}
           errorMsg={!!errors.celular ? errors.celular?.message : undefined}
         />
 

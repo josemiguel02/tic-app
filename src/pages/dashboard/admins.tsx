@@ -1,4 +1,5 @@
 import NextLink from 'next/link'
+import dynamic from 'next/dynamic'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,16 +12,19 @@ import {
   CircularProgress
 } from '@chakra-ui/react'
 import { AdminLayout } from '@/layouts'
-import { TableAdmins, Button, AddAdminModal } from '@/components'
+import { Button, AddAdminModal } from '@/components'
 import { IoMdAdd } from 'react-icons/io'
 import { MdKeyboardArrowRight } from 'react-icons/md'
-import { useAuth, useAdmin } from '@/hooks'
+import { useAuth } from '@/hooks'
+
+const AdminsTable = dynamic(() => import('@/components/AdminsTable'), {
+  loading: () => <CircularProgress isIndeterminate color='primary' />
+})
 
 export { getServerSideProps } from '@/utils/admin-middleware'
 
 const AdminsPage = () => {
   const { admin } = useAuth()
-  const { admins } = useAdmin()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
@@ -50,8 +54,7 @@ const AdminsPage = () => {
           {admin?.role === 'ADMIN' && (
             <Button
               size='sm'
-              text='Nuevo admin'
-              fontSize='.9rem'
+              text='Agregar'
               rightIcon={undefined}
               leftIcon={<Icon as={IoMdAdd} boxSize={5} />}
               onClick={onOpen}
@@ -60,11 +63,7 @@ const AdminsPage = () => {
         </Flex>
 
         <Box mb={6}>
-          {!admins.length ? (
-            <CircularProgress isIndeterminate color='primary' flex='1' />
-          ) : (
-            <TableAdmins />
-          )}
+          <AdminsTable />
         </Box>
       </AdminLayout>
 

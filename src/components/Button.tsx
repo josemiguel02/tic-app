@@ -13,6 +13,7 @@ export const Button: FCC<MyButtonProps> = ({ text, ...rest }) => {
     <ChakraButton
       fontSize='.9rem'
       rightIcon={<Icon as={MdOutlineArrowRightAlt} boxSize={5} />}
+      _hover={{}}
       {...rest}
     >
       {text}
