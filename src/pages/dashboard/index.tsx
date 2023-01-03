@@ -28,9 +28,8 @@ const DashboardPage = () => {
     }
   }).length
 
-  const usersApproved = users.filter(user => {
-    const qualification = user.calificacion ?? 0
-    return qualification >= 7
+  const usersApproved = users.filter(({ calificacion }) => {
+    return calificacion! >= 15
   }).length
 
   const usersFailed = users.filter(user => {
