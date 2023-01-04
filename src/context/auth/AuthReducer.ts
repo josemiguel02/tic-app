@@ -1,5 +1,5 @@
 import type { IAuthState } from './AuthProvider'
-import { isAdmin } from '@/utils/check-user-type'
+// import { isAdmin } from '@/utils/check-user-type'
 
 type AuthActionType =
   | { type: '[AUTH] - LOGIN'; payload: IUser | IAdmin }
@@ -9,7 +9,8 @@ export const AuthReducer = (state: IAuthState, action: AuthActionType): IAuthSta
 
   switch (action.type) {
     case '[AUTH] - LOGIN':
-      if (isAdmin(action.payload)) {
+      const admin = action.payload as IAdmin
+      if (admin?.role !== undefined) {
         return {
           ...state,
           isLoggedIn: true,

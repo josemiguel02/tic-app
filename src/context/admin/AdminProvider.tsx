@@ -1,8 +1,9 @@
 import { ticApi } from '@/api/tic-api'
-import { hasTokenAndIsAdmin } from '@/utils/check-user-type'
+// import { hasTokenAndIsAdmin } from '@/utils/check-user-type'
 import { useReducer, useEffect } from 'react'
 import AdminContext from './AdminContext'
 import { AdminReducer } from './AdminReducer'
+import { getAuthCookie } from '@/utils/cookies'
 
 export interface AdminState {
   admins: IAdministrador[]
@@ -24,8 +25,8 @@ const AdminProvider: FCC = ({ children }) => {
   const [state, dispatch] = useReducer(AdminReducer, ADMIN_INITIAL_STATE)
 
   const getAdmins = async () => {
-    const isValidAdmin = await hasTokenAndIsAdmin()
-    if (!isValidAdmin) {
+    // const isValidAdmin = await hasTokenAndIsAdmin()
+    if (!getAuthCookie()) {
       return
     }
 
@@ -38,8 +39,8 @@ const AdminProvider: FCC = ({ children }) => {
   }
 
   const getAdminsRoles = async () => {
-    const isValidAdmin = await hasTokenAndIsAdmin()
-    if (!isValidAdmin) {
+    // const isValidAdmin = await hasTokenAndIsAdmin()
+    if (!getAuthCookie()) {
       return
     }
 
@@ -52,8 +53,8 @@ const AdminProvider: FCC = ({ children }) => {
   }
 
   const getUsers = async () => {
-    const isValidAdmin = await hasTokenAndIsAdmin()
-    if (!isValidAdmin) {
+    // const isValidAdmin = await hasTokenAndIsAdmin()
+    if (!getAuthCookie()) {
       return
     }
 
@@ -72,8 +73,8 @@ const AdminProvider: FCC = ({ children }) => {
   }
 
   const getQuizzes = async () => {
-    const isValidAdmin = await hasTokenAndIsAdmin()
-    if (!isValidAdmin) {
+    // const isValidAdmin = await hasTokenAndIsAdmin()
+    if (!getAuthCookie()) {
       return
     }
 

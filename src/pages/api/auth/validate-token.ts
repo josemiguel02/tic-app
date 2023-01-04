@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { signToken, verifyToken } from '@/lib/jwt'
-import { isAdmin } from '@/utils/check-user-type'
+// import { isAdmin } from '@/utils/check-user-type'
 import { Admin, Usuario } from '@/database'
 
 export default function handlerValidateToken(req: NextApiRequest, res: NextApiResponse) {
@@ -23,7 +23,8 @@ async function validateToken(req: NextApiRequest, res: NextApiResponse) {
   try {
     const user = await verifyToken(token)
     // #TODO: Verificar en la BD si se encuentra el usuario y luego responder con el token validado
-    if(isAdmin(user)) {
+    const admin = user as IAdmin
+    if(admin?.role !== undefined) {
       const admin = await new Admin().findByID(user.id)
       const { id, nombre, apellido, cedula, rol } = admin
 

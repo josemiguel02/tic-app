@@ -2,7 +2,8 @@ import { useReducer, useEffect } from 'react'
 import QuizContext from './QuizContext'
 import { QuizReducer } from './QuizReducer'
 import { ticApi } from '@/api/tic-api'
-import { hasTokenAndIsUser } from '@/utils/check-user-type'
+import { getAuthCookie } from '@/utils/cookies'
+// import { hasTokenAndIsUser } from '@/utils/check-user-type'
 
 export interface IQuizState {
   questions: IPreguntas[]
@@ -26,8 +27,8 @@ const QuizProvider: FCC = ({ children }) => {
   }
 
   const loadQuestions = async () => {
-    const isValidUser = await hasTokenAndIsUser()
-    if (!isValidUser) {
+    // const isValidUser = await hasTokenAndIsUser()
+    if (!getAuthCookie()) {
       return
     }
 

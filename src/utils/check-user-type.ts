@@ -3,7 +3,7 @@ import { getAuthCookie } from './cookies'
 
 const jwtSecret = process.env.NEXT_PUBLIC_JWT
 
-export const isAdmin = (user: IUser | IAdmin): boolean =>
+const isAdmin = (user: IUser | IAdmin): boolean =>
   Object.hasOwn(user, 'role')
 
 export const hasTokenAndIsAdmin = async (): Promise<boolean | undefined> => {

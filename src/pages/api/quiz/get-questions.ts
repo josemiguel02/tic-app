@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { Usuario } from '@/database'
 import { verifyToken } from '@/lib/jwt'
-import { isAdmin } from '@/utils/check-user-type'
+// import { isAdmin } from '@/utils/check-user-type'
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
@@ -23,12 +23,12 @@ async function getQuestions(req: NextApiRequest, res: NextApiResponse) {
   try {
     const user = await verifyToken(token)
 
-    if (!isAdmin(user)) {
-      const preguntas = await new Usuario().findQuiz(user.id)
-      return res.status(200).json(preguntas)
-    }
+    // if (!isAdmin(user)) {
+    // }
 
-    return res.status(401).json({ msg: 'No estas autorizado para acceder a este contenido' })
+    const preguntas = await new Usuario().findQuiz(user.id)
+    return res.status(200).json(preguntas)
+    // return res.status(401).json({ msg: 'No estas autorizado para acceder a este contenido' })
   } catch (error) {
     return res.status(404).json({ msg: error })
   }
