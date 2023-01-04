@@ -1,7 +1,10 @@
-import Database from './Database'
+// import Database from './Database'
+import { getDatabaseConnector } from '@/utils/db-injector'
 
-export class Roles extends Database<IRolesAdmin, IRolesAdmin[]> {
-  private _rolesTable = this._db('roles')
+const db = getDatabaseConnector()
+
+export class Roles {
+  private _rolesTable = db('roles')
 
   async findMany(): Promise<IRolesAdmin[]> {
     try {

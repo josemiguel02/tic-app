@@ -27,7 +27,18 @@ export default class Database<T extends {} = any, R = any[]> {
         port: this._port,
         user: this._user,
         password: this._password,
-        database: this._dbName
+        database: this._dbName,
+        pool: {
+          min: 2,
+          max: 40
+
+          // destroyTimeoutMillis: 100,
+          // idleTimeoutMillis: 100,
+          // reapIntervalMillis: 100,
+          // createRetryIntervalMillis: 400,
+          // acquireTimeoutMillis: 10000,
+          // createTimeoutMillis: 10000
+        }
       }
     })
   }

@@ -34,7 +34,7 @@ const QuizProvider: FCC = ({ children }) => {
 
     try {
       const { data } = await ticApi.get('/quiz/get-questions')
-      const questions = JSON.parse(data)
+      const questions = typeof data === 'string' ? JSON.parse(data) : data
       const shuffleArr = questions.sort(() => Math.random() - 0.5).slice(0, 1)
       dispatch({ type: '[QUIZ] - SET QUESTIONS', payload: questions })
       dispatch({ type: '[QUIZ] - SLICE QUESTIONS', payload: shuffleArr })

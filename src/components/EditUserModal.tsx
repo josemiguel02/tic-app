@@ -13,7 +13,6 @@ import { MyModal } from './MyModal'
 import { useAdmin } from '@/hooks'
 import { ticApi } from '@/api/tic-api'
 import { MyAlert } from '.'
-import { validateIdentification } from '@/utils/validations'
 
 interface EditUserModalProps {
   isOpen: boolean
@@ -55,8 +54,7 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
       minLength: {
         value: 10,
         message: 'Mínimo 10 caracteres'
-      },
-      validate: validateIdentification
+      }
     }
   })
 
@@ -202,9 +200,7 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
           label='Dirección'
           isInvalid={!!errors.direccion}
           focusBorderColor={!!errors.direccion ? 'crimson' : 'primary'}
-          {...register('direccion', {
-            required: 'Este campo es requerido'
-          })}
+          {...register('direccion')}
           errorMsg={!!errors.direccion ? errors.direccion?.message : undefined}
         />
 
@@ -224,9 +220,7 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
           label='Modelo'
           isInvalid={!!errors.modelo}
           focusBorderColor={!!errors.modelo ? 'crimson' : 'primary'}
-          {...register('modelo', {
-            required: 'Este campo es requerido'
-          })}
+          {...register('modelo')}
           errorMsg={!!errors.modelo ? errors.modelo?.message : undefined}
         />
 
@@ -238,9 +232,7 @@ export const EditUserModal: FCC<EditUserModalProps> = ({
             bgColor='#C9C9C95d'
             isInvalid={!!errors.operadora}
             focusBorderColor={!!errors.operadora ? 'crimson' : 'primary'}
-            {...register('operadora', {
-              required: 'Este campo es requerido'
-            })}
+            {...register('operadora')}
           >
             {['CLARO', 'MOVISTAR', 'TUENTI', 'CNT'].map((item) => (
               <option key={item} value={item}>

@@ -1,7 +1,10 @@
-import Database from './Database'
+// import Database from './Database'
+import { getDatabaseConnector } from '@/utils/db-injector'
 
-export class Examen extends Database<IExamen, IExamen[]> {
-  private _quizTable = this._db('examen')
+const db = getDatabaseConnector()
+
+export class Examen {
+  private _quizTable = db('examen')
 
   async findMany() {
     try {

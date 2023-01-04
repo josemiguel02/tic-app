@@ -13,7 +13,6 @@ import { useAdmin } from '@/hooks'
 import { useForm, useController } from 'react-hook-form'
 import { ticApi } from '@/api/tic-api'
 import { MyAlert } from '.'
-import { validateIdentification } from '@/utils/validations'
 
 interface AddUserModalProps {
   isOpen: boolean
@@ -46,7 +45,6 @@ export const AddUserModal: FCC<AddUserModalProps> = ({ isOpen, onClose }) => {
         value: 10,
         message: 'Mínimo 10 caracteres'
       }
-      // validate: validateIdentification
     }
   })
 
@@ -181,9 +179,7 @@ export const AddUserModal: FCC<AddUserModalProps> = ({ isOpen, onClose }) => {
           label='Dirección'
           isInvalid={!!errors.direccion}
           focusBorderColor={!!errors.direccion ? 'crimson' : 'primary'}
-          {...register('direccion', {
-            required: 'Este campo es requerido'
-          })}
+          {...register('direccion')}
           errorMsg={!!errors.direccion ? errors.direccion?.message : undefined}
         />
 
@@ -203,9 +199,7 @@ export const AddUserModal: FCC<AddUserModalProps> = ({ isOpen, onClose }) => {
           label='Modelo'
           isInvalid={!!errors.modelo}
           focusBorderColor={!!errors.modelo ? 'crimson' : 'primary'}
-          {...register('modelo', {
-            required: 'Este campo es requerido'
-          })}
+          {...register('modelo')}
           errorMsg={!!errors.modelo ? errors.modelo?.message : undefined}
         />
 
@@ -217,9 +211,7 @@ export const AddUserModal: FCC<AddUserModalProps> = ({ isOpen, onClose }) => {
             bgColor='#C9C9C95d'
             isInvalid={!!errors.operadora}
             focusBorderColor={!!errors.operadora ? 'crimson' : 'primary'}
-            {...register('operadora', {
-              required: 'Este campo es requerido'
-            })}
+            {...register('operadora')}
           >
             {['CLARO', 'MOVISTAR', 'TUENTI', 'CNT'].map(item => (
               <option key={item} value={item}>

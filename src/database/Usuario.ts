@@ -1,7 +1,10 @@
-import Database from './Database'
+// import Database from './Database'
+import { getDatabaseConnector } from '@/utils/db-injector'
 
-export class Usuario extends Database<IUsuario, IUsuario[]> {
-  private _userTable = this._db('usuario')
+const db = getDatabaseConnector()
+
+export class Usuario {
+  private _userTable = db('usuario')
 
   async findQuiz(id: number): Promise<IPreguntas[]> {
     try {

@@ -11,7 +11,6 @@ import { useForm, useController } from 'react-hook-form'
 import { TextInput, MyAlert, MyModal } from '.'
 import { useAdmin } from '@/hooks'
 import { ticApi } from '@/api/tic-api'
-import { validateIdentification } from '@/utils/validations'
 
 interface EditAdminModalProps {
   isOpen: boolean
@@ -51,8 +50,7 @@ export const EditAdminModal: FCC<EditAdminModalProps> = ({
       minLength: {
         value: 10,
         message: 'Mínimo 10 caracteres'
-      },
-      validate: validateIdentification
+      }
     }
   })
 

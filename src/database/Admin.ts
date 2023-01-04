@@ -1,7 +1,10 @@
-import Database from './Database'
+// import Database from './Database'
+import { getDatabaseConnector } from '@/utils/db-injector'
 
-export class Admin extends Database<IAdministrador, IAdministrador[]> {
-  private _adminTable = this._db('admin')
+const db = getDatabaseConnector()
+
+export class Admin {
+  private _adminTable = db('admin')
 
   async findMany(): Promise<IAdministrador[]> {
     try {

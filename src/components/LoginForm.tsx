@@ -20,7 +20,6 @@ import {
 import { HiOutlineUserCircle, HiOutlineLockClosed } from 'react-icons/hi'
 import { useAuth } from '@/hooks'
 import { Button } from '.'
-import { validateIdentification } from '@/utils/validations'
 
 export const LoginForm = () => {
   const {
@@ -38,7 +37,6 @@ export const LoginForm = () => {
         value: 10,
         message: 'Mínimo 10 caracteres'
       }
-      // validate: validateIdentification
     }
   })
 
@@ -67,7 +65,7 @@ export const LoginForm = () => {
 
       if (!isValidLoginAdmin) {
         toast({
-          title: msg,
+          title: typeof msg === 'string' ? msg : null,
           status: 'error',
           duration: 3000,
           isClosable: true
@@ -85,7 +83,7 @@ export const LoginForm = () => {
 
     if (!isValidLoginUser) {
       toast({
-        title: msg,
+        title: typeof msg === 'string' ? msg : null,
         status: 'error',
         duration: 3000,
         isClosable: true
