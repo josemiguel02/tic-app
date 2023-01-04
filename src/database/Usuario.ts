@@ -120,36 +120,11 @@ export class Usuario extends Database<IUsuario, IUsuario[]> {
 
   async create(data: UsuarioDTO | UsuarioDTO[]) {
     try {
-      // Validar para cuando se inserte varios usuarios
-      // if (Array.isArray(data)) {
-      //   const usersFound = await Promise.all(
-      //     data.map(async u => {
-      //       return await this._userTable.where('cedula', u.cedula).select('id')
-      //     })
-      //   )
-
-      //   // console.log(usersFound)
-
-      //   // const usersFound = await this._userTable
-      //   //   .where('cedula', data)
-      //   //   .select('id')
-
-      //   return
-      // }
-
-      // const userFound = await this._userTable
-      //   .where('cedula', data.cedula)
-      //   .select('id')
-
-      // if (userFound.length) {
-      //   throw 'El usuario ya se encuentra registrado'
-      // }
-
       const userAdded = await this._userTable.insert(data)
 
-      // if (!userAdded.length) {
-      //   throw 'No se pudo agregar el usuario'
-      // }
+      if (!userAdded.length) {
+        throw 'No se pudo agregar el usuario'
+      }
 
       return userAdded
     } catch (error) {
