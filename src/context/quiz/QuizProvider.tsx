@@ -28,15 +28,16 @@ const QuizProvider: FCC = ({ children }) => {
 
   const loadQuestions = async () => {
     // const isValidUser = await hasTokenAndIsUser()
-    // if (!getAuthCookie()) {
-    //   return
-    // }
+    if (!getAuthCookie()) {
+      return
+    }
 
     try {
-      const { data } = await ticApi.get<IPreguntas[]>('/quiz/get-questions')
-      // const shuffleArr = data.sort(() => Math.random() - 0.5).slice(0, 1)
-      dispatch({ type: '[QUIZ] - SET QUESTIONS', payload: data })
-      dispatch({ type: '[QUIZ] - SLICE QUESTIONS', payload: data })
+      const { data } = await ticApi.get('/quiz/get-questions')
+      const questions = JSON.parse(data)
+      const shuffleArr = questions.sort(() => Math.random() - 0.5).slice(0, 1)
+      dispatch({ type: '[QUIZ] - SET QUESTIONS', payload: questions })
+      dispatch({ type: '[QUIZ] - SLICE QUESTIONS', payload: shuffleArr })
     } catch (error) {
       dispatch({ type: '[QUIZ] - SET QUESTIONS', payload: [] })
     }
