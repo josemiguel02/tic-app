@@ -28,9 +28,9 @@ const QuizProvider: FCC = ({ children }) => {
 
   const loadQuestions = async () => {
     // const isValidUser = await hasTokenAndIsUser()
-    if (!getAuthCookie()) {
-      return
-    }
+    // if (!getAuthCookie()) {
+    //   return
+    // }
 
     try {
       const { data } = await ticApi.get<IPreguntas[]>('/quiz/get-questions')
