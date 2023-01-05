@@ -16,7 +16,7 @@ import {
 import { AiOutlineUser } from 'react-icons/ai'
 import { AdminLayout } from '@/layouts'
 import { useAdmin } from '@/hooks'
-import { NOTE_QUALIFICATION } from '@/utils/constants'
+import { OTHERS_NOTE_QUALIFICATION, TEC_NOTE_QUALIFICATION } from '@/utils/constants'
 
 export { getServerSideProps } from '@/utils/admin-middleware'
 
@@ -35,17 +35,27 @@ const DashboardPage = () => {
       cargo === 'ESCANEADOR' ||
       cargo === 'ASISTENTE ESCANER'
     ) {
-      return calificacion! >= 15
+      return calificacion! >= TEC_NOTE_QUALIFICATION
     }
 
-    return calificacion! >= NOTE_QUALIFICATION
+    return calificacion! >= OTHERS_NOTE_QUALIFICATION
   }).length
 
-  const usersFailed = users.filter(user => {
-    if (user.calificacion || user.examen_terminado) {
-      return user.calificacion! < 7
+  const usersFailed = users.filter(
+    ({ calificacion, examen_terminado, cargo }) => {
+      if (calificacion || examen_terminado) {
+        if (
+          cargo === 'OPERADORES CDA' ||
+          cargo === 'ESCANEADOR' ||
+          cargo === 'ASISTENTE ESCANER'
+        ) {
+          return calificacion! < TEC_NOTE_QUALIFICATION
+        }
+
+        return calificacion! < OTHERS_NOTE_QUALIFICATION
+      }
     }
-  }).length
+  ).length
 
   return (
     <AdminLayout title='Dashboard'>

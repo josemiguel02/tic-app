@@ -38,8 +38,11 @@ const UsersModalReport: FCC<UsersModalReportProps> = ({ isOpen, onClose }) => {
   })
 
   const position = watch('position')
+  const quiz_status = watch('quiz_status')
   const dateFrom = watch('dateFrom')
   const dateTo = watch('dateTo')
+
+  const QUIZ_STATUS: ReportType['quiz_status'][] = ['TODOS', 'APROBADOS', 'REPROBADOS', 'PENDIENTES']
 
   useEffect(() => {
     const usersPos = users.filter(user => user.cargo === position)
@@ -56,8 +59,8 @@ const UsersModalReport: FCC<UsersModalReportProps> = ({ isOpen, onClose }) => {
     })
 
     setUsersReport(usersFiltered)
-    setReportDetails({ position, dateFrom, dateTo })
-  }, [position, dateFrom, dateTo])
+    setReportDetails({ position, quiz_status, dateFrom, dateTo })
+  }, [position, quiz_status, dateFrom, dateTo])
 
   useEffect(() => {
     updateInstance()
@@ -122,6 +125,33 @@ const UsersModalReport: FCC<UsersModalReportProps> = ({ isOpen, onClose }) => {
           )}
         </FormControl>
 
+        <FormControl>
+          <FormLabel>Estado Examen</FormLabel>
+          <Select
+            variant='filled'
+            defaultValue='TODOS'
+            placeholder='Selecciona un estado...'
+            bgColor='#C9C9C95d'
+            isInvalid={!!errors.quiz_status}
+            focusBorderColor={!!errors.quiz_status ? 'crimson' : 'primary'}
+            {...register('quiz_status', {
+              required: 'Este campo es requerido'
+            })}
+          >
+            {QUIZ_STATUS.map(status => (
+              <option key={status} value={status}>
+                {status}
+              </option>
+            ))}
+          </Select>
+
+          {!!errors.quiz_status && (
+            <Text as='small' variant='textError'>
+              {errors.quiz_status?.message}
+            </Text>
+          )}
+        </FormControl>
+
         <TextInput
           type='date'
           label='Fecha desde'
@@ -137,6 +167,7 @@ const UsersModalReport: FCC<UsersModalReportProps> = ({ isOpen, onClose }) => {
           type='date'
           label='Hasta'
           isInvalid={!!errors.dateTo}
+          defaultValue={new Date().toISOString().slice(0, 10)}
           focusBorderColor={!!errors.dateTo ? 'crimson' : 'primary'}
           {...register('dateTo', {
             required: 'Este campo es requerido'

@@ -38,7 +38,7 @@ declare global {
   interface IPreguntas {
     id: string
     enunciado: string
-    opciones: IOpciones[] /* | string[] */
+    opciones: IOpciones[]
     puntaje: number
     respuesta?: number
     tipo: 'seleccion' | 'tipeo'
@@ -92,6 +92,7 @@ declare global {
 
   type ReportType = {
     position: string
+    quiz_status: 'TODOS' | 'APROBADOS' | 'REPROBADOS'| 'PENDIENTES'
     dateFrom: string
     dateTo: string
   }

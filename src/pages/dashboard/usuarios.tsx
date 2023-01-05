@@ -35,7 +35,7 @@ const UsersModalReport = dynamic(
   }
 )
 
-const DataTable = dynamic(() => import('@/components/DataTable'), {
+const UsersTable = dynamic(() => import('@/components/UsersTable'), {
   loading: () => <CircularProgress isIndeterminate color='primary' />
 })
 
@@ -114,12 +114,34 @@ const UsuariosPage = () => {
 
     debounceRef.current = setTimeout(() => {
       searchUser(query)
-    }, 400)
+    }, 500)
   }
 
   const searchUser = (query: string) => {
+    const allQuery = query.toLowerCase()
+
     const usuarios = users.filter(user => {
-      if (user.nombre.toLocaleLowerCase().startsWith(query.toLowerCase())) {
+      const {
+        nombre,
+        apellido,
+        cedula,
+        cargo,
+        direccion,
+        celular,
+        modelo,
+        operadora
+      } = user
+
+      if (
+        nombre.toLowerCase().includes(allQuery) ||
+        apellido.toLowerCase().includes(allQuery) ||
+        cedula.toLowerCase().includes(allQuery) ||
+        cargo.toLowerCase().includes(allQuery) ||
+        direccion.toLowerCase().includes(allQuery) ||
+        celular.toLowerCase().includes(allQuery) ||
+        modelo.toLowerCase().includes(allQuery) ||
+        operadora.toLowerCase().includes(allQuery)
+      ) {
         return user
       }
     })
@@ -151,35 +173,36 @@ const UsuariosPage = () => {
         </Heading>
 
         <Flex mt={5} justify='space-between'>
-          {/* <InputGroup maxW='200px' alignSelf='end'>
-            <InputLeftElement top='50%' transform='translateY(-50%)'>
-              <Icon as={BiSearchAlt} boxSize={5} />
-            </InputLeftElement>
+          <Flex flexDir='column' gap={2}>
+            <InputGroup maxW={44}>
+              <InputLeftElement top='50%' transform='translateY(-50%)'>
+                <Icon as={BiSearchAlt} boxSize={5} />
+              </InputLeftElement>
 
-            <Input
-              type='search'
-              variant='filled'
-              rounded='md'
-              bgColor='#C9C9C95d'
-              placeholder='Buscar...'
+              <Input
+                size='sm'
+                type='search'
+                variant='filled'
+                rounded='md'
+                bgColor='#C9C9C95d'
+                placeholder='Buscar...'
+                focusBorderColor='primary'
+                onChange={e => {
+                  setTxt(e.target.value)
+                  onQueryChanged(e.target.value)
+                }}
+              />
+            </InputGroup>
+
+            <Button
               size='sm'
-              focusBorderColor='primary'
-              onChange={e => {
-                setTxt(e.target.value)
-                onQueryChanged(e.target.value)
-              }}
-            />
-          </InputGroup> */}
-
-          <Button
-            size='sm'
-            variant='danger'
-            onClick={() => setShowReportDialog(true)}
-            leftIcon={<Icon as={AiOutlineFilePdf} boxSize={4} />}
-            alignSelf='end'
-          >
-            Generar reporte
-          </Button>
+              variant='danger'
+              onClick={() => setShowReportDialog(true)}
+              leftIcon={<Icon as={AiOutlineFilePdf} boxSize={4} />}
+            >
+              Generar reporte
+            </Button>
+          </Flex>
 
           <Flex flexDir='column' gap={2}>
             {admin?.role === 'ADMIN' && (
@@ -205,8 +228,8 @@ const UsuariosPage = () => {
           </Flex>
         </Flex>
 
-        <Box mb={6}>
-          <DataTable />
+        <Box my={6}>
+          <UsersTable />
         </Box>
       </AdminLayout>
 

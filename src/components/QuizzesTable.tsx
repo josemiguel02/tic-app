@@ -17,14 +17,6 @@ import {
   IconButton,
   useToast
 } from '@chakra-ui/react'
-import { AiOutlineCaretUp, AiOutlineCaretDown } from 'react-icons/ai'
-import { FaSort } from 'react-icons/fa'
-import {
-  MdNavigateBefore,
-  MdNavigateNext,
-  MdLastPage,
-  MdFirstPage
-} from 'react-icons/md'
 import {
   useReactTable,
   flexRender,
@@ -33,14 +25,22 @@ import {
   SortingState,
   getSortedRowModel,
   createColumnHelper,
-  getPaginationRowModel
+  getPaginationRowModel,
+  getFilteredRowModel
 } from '@tanstack/react-table'
-import { useAdmin } from '@/hooks/useAdmin'
+import { Dialog, MyAlert, EditQuizModal, FilterInput } from '.'
+import { useAuth, useAdmin } from '@/hooks'
+import { ticApi } from '@/api/tic-api'
+import { AiOutlineCaretUp, AiOutlineCaretDown } from 'react-icons/ai'
+import { FaSort } from 'react-icons/fa'
 import { FiTrash2 } from 'react-icons/fi'
 import { TbPencil } from 'react-icons/tb'
-import { Dialog, MyAlert, EditQuizModal } from '.'
-import { ticApi } from '@/api/tic-api'
-import { useAuth } from '@/hooks'
+import {
+  MdNavigateBefore,
+  MdNavigateNext,
+  MdLastPage,
+  MdFirstPage
+} from 'react-icons/md'
 
 export type TableProps<Data extends object> = {
   data: Data[]
@@ -48,9 +48,10 @@ export type TableProps<Data extends object> = {
 }
 
 function Table<Data extends object>({ data, columns }: TableProps<Data>) {
+  const [sorting, setSorting] = useState<SortingState>([])
   const { admin } = useAuth()
   const isAdmin = admin?.role === 'ADMIN'
-  const [sorting, setSorting] = useState<SortingState>([])
+
   const table = useReactTable({
     columns,
     data,
@@ -58,6 +59,8 @@ function Table<Data extends object>({ data, columns }: TableProps<Data>) {
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    // Filter
+    getFilteredRowModel: getFilteredRowModel(),
     initialState: {
       pagination: { pageSize: 10 },
       columnVisibility: { 'options': isAdmin }
@@ -91,29 +94,44 @@ function Table<Data extends object>({ data, columns }: TableProps<Data>) {
               <Tr key={headerGroup.id} color='white'>
                 {headerGroup.headers.map(header => {
                   return (
-                    <Th
-                      key={header.id}
-                      onClick={header.column.getToggleSortingHandler()}
-                      color='inherit'
-                    >
-                      <Flex align='center' gap={4}>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                    <Th key={header.id} color='inherit'>
+                      {header.isPlaceholder ? null : (
+                        <>
+                          <Flex
+                            mb={2}
+                            gap={4}
+                            align='center'
+                            cursor={header.column.getCanSort() ? 'pointer' : ''}
+                            userSelect={
+                              header.column.getCanSort() ? 'none' : undefined
+                            }
+                            onClick={header.column.getToggleSortingHandler()}
+                          >
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
 
-                        <chakra.span>
-                          {header.column.getIsSorted() ? (
-                            header.column.getIsSorted() === 'desc' ? (
-                              <AiOutlineCaretDown aria-label='sorted descending' />
-                            ) : (
-                              <AiOutlineCaretUp aria-label='sorted ascending' />
-                            )
-                          ) : header.column.getCanSort() ? (
-                            <FaSort aria-label='sort' />
-                          ) : null}
-                        </chakra.span>
-                      </Flex>
+                            <chakra.span>
+                              {header.column.getIsSorted() ? (
+                                header.column.getIsSorted() === 'desc' ? (
+                                  <AiOutlineCaretDown aria-label='sorted descending' />
+                                ) : (
+                                  <AiOutlineCaretUp aria-label='sorted ascending' />
+                                )
+                              ) : header.column.getCanSort() ? (
+                                <FaSort aria-label='sort' />
+                              ) : null}
+                            </chakra.span>
+                          </Flex>
+                        </>
+                      )}
+
+                      {header.column.getCanFilter() ? (
+                        <div>
+                          <FilterInput column={header.column} table={table} />
+                        </div>
+                      ) : null}
                     </Th>
                   )
                 })}
@@ -250,7 +268,8 @@ const columns = [
     id: 'options',
     header: 'Opciones',
     cell: props => <ActionsBtns {...props.row.original} />,
-    enableSorting: false
+    enableSorting: false,
+    enableColumnFilter: false
   })
 ]
 

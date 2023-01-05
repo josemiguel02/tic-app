@@ -65,7 +65,7 @@ export const LoginForm = () => {
 
       if (!isValidLoginAdmin) {
         toast({
-          title: typeof msg === 'string' ? msg : null,
+          title: typeof msg === 'string' ? msg : 'Ha ocurrido un error al iniciar sesión',
           status: 'error',
           duration: 3000,
           isClosable: true
@@ -83,7 +83,7 @@ export const LoginForm = () => {
 
     if (!isValidLoginUser) {
       toast({
-        title: typeof msg === 'string' ? msg : null,
+        title: typeof msg === 'string' ? msg : 'Ha ocurrido un error al iniciar sesión',
         status: 'error',
         duration: 3000,
         isClosable: true

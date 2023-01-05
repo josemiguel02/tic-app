@@ -18,14 +18,6 @@ import {
   useToast,
   Badge
 } from '@chakra-ui/react'
-import { AiOutlineCaretUp, AiOutlineCaretDown } from 'react-icons/ai'
-import { FaSort } from 'react-icons/fa'
-import {
-  MdNavigateBefore,
-  MdNavigateNext,
-  MdLastPage,
-  MdFirstPage
-} from 'react-icons/md'
 import {
   useReactTable,
   flexRender,
@@ -34,14 +26,22 @@ import {
   SortingState,
   getSortedRowModel,
   createColumnHelper,
-  getPaginationRowModel
+  getPaginationRowModel,
+  getFilteredRowModel
 } from '@tanstack/react-table'
-import { useAdmin } from '@/hooks/useAdmin'
+import { EditUserModal, Dialog, MyAlert, FilterInput } from '.'
+import { useAuth, useAdmin } from '@/hooks'
+import { ticApi } from '@/api/tic-api'
+import { AiOutlineCaretUp, AiOutlineCaretDown } from 'react-icons/ai'
+import { FaSort } from 'react-icons/fa'
 import { FiTrash2 } from 'react-icons/fi'
 import { TbPencil } from 'react-icons/tb'
-import { EditUserModal, Dialog, MyAlert } from '.'
-import { ticApi } from '@/api/tic-api'
-import { useAuth } from '@/hooks'
+import {
+  MdNavigateBefore,
+  MdNavigateNext,
+  MdLastPage,
+  MdFirstPage
+} from 'react-icons/md'
 
 export type TableProps<Data extends object> = {
   data: Data[]
@@ -49,9 +49,10 @@ export type TableProps<Data extends object> = {
 }
 
 function Table<Data extends object>({ data, columns }: TableProps<Data>) {
+  const [sorting, setSorting] = useState<SortingState>([])
   const { admin } = useAuth()
   const isAdmin = admin?.role === 'ADMIN'
-  const [sorting, setSorting] = useState<SortingState>([])
+
   const table = useReactTable({
     columns,
     data,
@@ -59,6 +60,8 @@ function Table<Data extends object>({ data, columns }: TableProps<Data>) {
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    // Filter
+    getFilteredRowModel: getFilteredRowModel(),
     initialState: {
       pagination: { pageSize: 10 },
       columnVisibility: { 'options': isAdmin }
@@ -71,7 +74,6 @@ function Table<Data extends object>({ data, columns }: TableProps<Data>) {
   return (
     <>
       <TableContainer
-        mt={10}
         sx={{
           '&::-webkit-scrollbar': {
             h: '6px'
@@ -91,30 +93,51 @@ function Table<Data extends object>({ data, columns }: TableProps<Data>) {
             {table.getHeaderGroups().map(headerGroup => (
               <Tr key={headerGroup.id} color='white'>
                 {headerGroup.headers.map(header => {
+                  const meta: any = header.column.columnDef.meta
+
                   return (
                     <Th
                       key={header.id}
-                      onClick={header.column.getToggleSortingHandler()}
                       color='inherit'
+                      isNumeric={meta?.isNumeric}
                     >
-                      <Flex align='center' gap={4}>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                      {header.isPlaceholder ? null : (
+                        <>
+                          <Flex
+                            mb={2}
+                            gap={4}
+                            align='center'
+                            cursor={header.column.getCanSort() ? 'pointer' : ''}
+                            userSelect={
+                              header.column.getCanSort() ? 'none' : undefined
+                            }
+                            onClick={header.column.getToggleSortingHandler()}
+                          >
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
 
-                        <chakra.span>
-                          {header.column.getIsSorted() ? (
-                            header.column.getIsSorted() === 'desc' ? (
-                              <AiOutlineCaretDown aria-label='sorted descending' />
-                            ) : (
-                              <AiOutlineCaretUp aria-label='sorted ascending' />
-                            )
-                          ) : header.column.getCanSort() ? (
-                            <FaSort aria-label='sort' />
-                          ) : null}
-                        </chakra.span>
-                      </Flex>
+                            <chakra.span>
+                              {header.column.getIsSorted() ? (
+                                header.column.getIsSorted() === 'desc' ? (
+                                  <AiOutlineCaretDown aria-label='sorted descending' />
+                                ) : (
+                                  <AiOutlineCaretUp aria-label='sorted ascending' />
+                                )
+                              ) : header.column.getCanSort() ? (
+                                <FaSort aria-label='sort' />
+                              ) : null}
+                            </chakra.span>
+                          </Flex>
+                        </>
+                      )}
+
+                      {header.column.getCanFilter() ? (
+                        <div>
+                          <FilterInput column={header.column} table={table} />
+                        </div>
+                      ) : null}
                     </Th>
                   )
                 })}
@@ -125,8 +148,8 @@ function Table<Data extends object>({ data, columns }: TableProps<Data>) {
             {table.getRowModel().rows.map(row => (
               <Tr key={row.id}>
                 {row.getVisibleCells().map(cell => {
-                  // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
                   const meta: any = cell.column.columnDef.meta
+
                   return (
                     <Td key={cell.id} isNumeric={meta?.isNumeric}>
                       {flexRender(
@@ -247,15 +270,15 @@ const columnHelper = createColumnHelper<IUsuario>()
 const columns = [
   columnHelper.accessor('nombre', {
     cell: info => info.getValue(),
-    header: 'Nombre'
+    header: 'Nombres'
   }),
   columnHelper.accessor('apellido', {
     cell: info => info.getValue(),
-    header: 'Apellido'
+    header: 'Apellidos'
   }),
   columnHelper.accessor('cedula', {
     cell: info => info.getValue(),
-    header: 'Cédula'
+    header: 'Cedula'
   }),
   columnHelper.accessor('cargo', {
     cell: info => info.getValue(),
@@ -277,20 +300,25 @@ const columns = [
     cell: info => info.getValue(),
     header: 'Operadora'
   }),
+  columnHelper.accessor('calificacion', {
+    cell: info => info.getValue() ?? 'null',
+    header: 'Calificacion',
+    meta: {
+      isNumeric: true
+    }
+  }),
   columnHelper.accessor('examen_terminado', {
     cell: info => <QuizStatus quizStatus={info.getValue()} />,
     header: 'Estado Examen',
-    enableSorting: false
-  }),
-  columnHelper.accessor('calificacion', {
-    cell: info => info.getValue() ?? 'null',
-    header: 'Calificacion'
+    enableSorting: false,
+    enableColumnFilter: false
   }),
   columnHelper.display({
     id: 'options',
     header: 'Opciones',
     cell: props => <ActionsBtns {...props.row.original} />,
-    enableSorting: false
+    enableSorting: false,
+    enableColumnFilter: false
   })
 ]
 
@@ -447,9 +475,9 @@ const ActionsBtns: FCC<IUsuario> = props => {
   )
 }
 
-const DataTable = () => {
-  const { users } = useAdmin()
-  return <Table columns={columns} data={users} />
+const UsersTable = () => {
+  const { usersFiltered } = useAdmin()
+  return <Table columns={columns} data={usersFiltered} />
 }
 
-export default DataTable
+export default UsersTable

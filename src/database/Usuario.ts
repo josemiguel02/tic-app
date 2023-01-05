@@ -1,4 +1,3 @@
-// import Database from './Database'
 import { getDatabaseConnector } from '@/utils/db-injector'
 
 const db = getDatabaseConnector()

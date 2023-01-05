@@ -1,6 +1,6 @@
 import React from 'react'
 import Head from 'next/head'
-import { Box, Heading, Flex, Show } from '@chakra-ui/react'
+import { Box, Heading, Flex } from '@chakra-ui/react'
 import { LogoutMenu, PageTransition, Sidebar } from '@/components'
 import { useAuth } from '@/hooks'
 
@@ -36,23 +36,9 @@ export const AdminLayout: FCC<AdminLayoutProps> = ({ children, title }) => {
       </Head>
 
       <div>
-        {/* <Show above='lg'>
-          <Sidebar />
-        </Show>
-
-        <Show>
-          <SidebarMd />
-        </Show> */}
-
         <Sidebar />
 
-        <Box
-          w='full'
-          flexDir='column'
-          // pl={{ base: '1rem', md: '15rem' }}
-          // pr={{ base: '1rem', md: '2rem' }}
-          pl='86px'
-        >
+        <Box w='full' flexDir='column' pl='86px'>
           <Flex flexDir='column' p={4}>
             <Header />
             <PageTransition flexDir='column' mt={10}>
