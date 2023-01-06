@@ -133,14 +133,14 @@ const UsuariosPage = () => {
       } = user
 
       if (
-        nombre.toLowerCase().includes(allQuery) ||
-        apellido.toLowerCase().includes(allQuery) ||
-        cedula.toLowerCase().includes(allQuery) ||
-        cargo.toLowerCase().includes(allQuery) ||
-        direccion.toLowerCase().includes(allQuery) ||
-        celular.toLowerCase().includes(allQuery) ||
-        modelo.toLowerCase().includes(allQuery) ||
-        operadora.toLowerCase().includes(allQuery)
+        nombre?.toLowerCase().includes(allQuery) ||
+        apellido?.toLowerCase().includes(allQuery) ||
+        cedula?.toLowerCase().includes(allQuery) ||
+        cargo?.toLowerCase().includes(allQuery) ||
+        direccion?.toLowerCase().includes(allQuery) ||
+        celular?.toLowerCase().includes(allQuery) ||
+        modelo?.toLowerCase().includes(allQuery) ||
+        operadora?.toLowerCase().includes(allQuery)
       ) {
         return user
       }
